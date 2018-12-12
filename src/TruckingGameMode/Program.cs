@@ -2,9 +2,9 @@
 
 namespace TruckingGameMode
 {
-    class Program
+    internal class Program
     {
-        static void Main()
+        private static void Main()
         {
             new GameModeBuilder()
                 .Use<GameMode>()

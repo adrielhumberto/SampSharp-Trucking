@@ -20,4 +20,8 @@
     <PackageReference Include="SampSharp.GameMode" Version="0.8.0-alpha10" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\GamemodeDatabase\GamemodeDatabase.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -13,8 +13,7 @@ namespace TruckingGameMode
         {
             base.LoadControllers(controllers);
 
-            controllers.Remove<BasePlayerController>();
-            controllers.Add(new PlayerController());
+            controllers.Override(new PlayerController());
         }
 
         protected override void OnInitialized(EventArgs e)
@@ -41,7 +40,6 @@ namespace TruckingGameMode
             AddPlayerClass(190, new Vector3(0.0f, 0.0f, 0.0f), 0.0f); // id 1
 
             #endregion
-
 
             base.OnInitialized(e);
         }
