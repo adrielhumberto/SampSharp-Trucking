@@ -34,5 +34,17 @@ namespace TruckingGameMode.Commands
             sender.Vehicle.Position = sender.Position;
             sender.Vehicle.Angle = 0.0f;
         }
+
+        [Command("engine")]
+        public static void OnEngineCommand(BasePlayer sender)
+        {
+            if(sender.State != PlayerState.Driving)
+            {
+                sender.SendClientMessage(Color.IndianRed, "You need to drive a car!");
+                return;
+            }
+
+            sender.Vehicle.Engine = sender.Vehicle.Engine != true;
+        }
     }
 }
