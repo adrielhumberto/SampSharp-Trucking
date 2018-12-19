@@ -78,5 +78,12 @@ namespace TruckingGameMode.Commands
                 }
             };
         }
+
+        [Command("reclass")]
+        public static void OnReClassCommand(BasePlayer sender)
+        {
+            sender.ForceClassSelection();
+            sender.Health = 0.0f;
+        }
     }
 }
