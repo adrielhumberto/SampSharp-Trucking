@@ -1,4 +1,7 @@
-﻿using SampSharp.GameMode.Definitions;
+﻿using System;
+using System.Collections.Generic;
+using SampSharp.GameMode.Definitions;
+using SampSharp.GameMode.Display;
 using SampSharp.GameMode.SAMP;
 using SampSharp.GameMode.SAMP.Commands;
 using SampSharp.GameMode.World;
@@ -45,6 +48,35 @@ namespace TruckingGameMode.Commands
             }
 
             sender.Vehicle.Engine = sender.Vehicle.Engine != true;
+        }
+
+        [Command("listenradio")]
+        public static void OnListenRadioCommand(BasePlayer sender)
+        {
+            var dialog = new ListDialog("Chose a radio station", "Chose", "Close");
+            dialog.AddItem("Pro FM");
+            dialog.AddItem("Radio Bandit");
+            dialog.AddItem("Stop radio");
+            dialog.Show(sender);
+
+            dialog.Response += (obj, e) =>
+            {
+                if(e.DialogButton == DialogButton.Right)
+                    return;
+
+                switch (e.ListItem)
+                {
+                    case 0:
+                        sender.PlayAudioStream("http://edge126.rdsnet.ro:84/profm/profm.mp3");
+                        break;
+                    case 1:
+                        sender.PlayAudioStream("http://live.radiobandit.ro:8000/bandit.mp3");
+                        break;
+                    default:
+                        sender.StopAudioStream();
+                        break;
+                }
+            };
         }
     }
 }
