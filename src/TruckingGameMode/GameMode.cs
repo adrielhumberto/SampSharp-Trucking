@@ -2,6 +2,9 @@
 using SampSharp.GameMode;
 using SampSharp.GameMode.Controllers;
 using SampSharp.GameMode.Definitions;
+using SampSharp.GameMode.Events;
+using SampSharp.GameMode.SAMP;
+using SampSharp.GameMode.World;
 using TruckingGameMode.Controllers;
 using TruckingGameMode.Spawns;
 
@@ -42,6 +45,15 @@ namespace TruckingGameMode
             #endregion
 
             base.OnInitialized(e);
+        }
+
+        protected override void OnPlayerCommandText(BasePlayer player, CommandTextEventArgs e)
+        {
+            if (player.State != PlayerState.None && player.State != PlayerState.Wasted)
+            {
+                base.OnPlayerCommandText(player, e);
+            }
+            else player.SendClientMessage(Color.IndianRed,"You can't use commands while not spawned!");
         }
     }
 }
