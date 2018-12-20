@@ -1,6 +1,6 @@
 ﻿using SampSharp.GameMode.SAMP;
 
-namespace TruckingGameMode.TempData
+namespace TruckingGameMode.Classes
 {
     public static class PlayerClassesColors
     {

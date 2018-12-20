@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using SampSharp.GameMode;
 
-namespace TruckingGameMode.Spawns
+namespace TruckingGameMode.Classes.Spawns
 {
     public class TruckerSpawn
     {

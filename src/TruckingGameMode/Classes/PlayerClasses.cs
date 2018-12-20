@@ -1,4 +1,4 @@
-﻿namespace TruckingGameMode.Enums
+﻿namespace TruckingGameMode.Classes
 {
     public enum PlayerClasses
     {

@@ -5,8 +5,8 @@ using SampSharp.GameMode.Definitions;
 using SampSharp.GameMode.Events;
 using SampSharp.GameMode.SAMP;
 using SampSharp.GameMode.World;
+using TruckingGameMode.Classes.Spawns;
 using TruckingGameMode.Controllers;
-using TruckingGameMode.Spawns;
 
 namespace TruckingGameMode
 {
