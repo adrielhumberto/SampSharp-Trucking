@@ -1,11 +1,12 @@
 ﻿using System;
 using SampSharp.GameMode;
+using SampSharp.GameMode.Definitions;
 using SampSharp.GameMode.Events;
 using SampSharp.GameMode.Pools;
 using SampSharp.GameMode.World;
-using TruckingGameMode.Enums;
-using TruckingGameMode.Spawns;
-using TruckingGameMode.TempData;
+using TruckingGameMode.Classes;
+using TruckingGameMode.Classes.Spawns;
+using TruckingGameMode.Commands;
 
 namespace TruckingGameMode.World
 {
@@ -13,6 +14,16 @@ namespace TruckingGameMode.World
     public class Player : BasePlayer
     {
         public PlayerClasses PlayerClass { get; set; }
+
+        public override void OnKeyStateChanged(KeyStateChangedEventArgs e)
+        {
+            base.OnKeyStateChanged(e);
+
+            if ((e.NewKeys == Keys.LookBehind) && (e.OldKeys != Keys.LookBehind))
+            {
+                GeneralCommands.OnEngineCommand(this);
+            }
+        }
 
         public override void OnRequestClass(RequestClassEventArgs e)
         {
@@ -66,6 +77,8 @@ namespace TruckingGameMode.World
             }
 
             SendClientMessageToAll(Color, message);
+
+            BaseVehicle.Create(VehicleModelType.Alpha, Position, 0.0f, 3, 3);
 
             base.OnSpawned(e);
         }
