@@ -32,9 +32,19 @@ namespace TruckingGameMode
 
             #endregion
 
-            TruckerSpawn.TruckerSpawns.Add(new TruckerSpawn(new Vector3(1491.6395f, 974.1372f, 10.8489f), 91.1944f));
-            TruckerSpawn.TruckerSpawns.Add(new TruckerSpawn(new Vector3(1482.0189f, 1010.8044f, 10.8203f), 104.8128f));
-            TruckerSpawn.TruckerSpawns.Add(new TruckerSpawn(new Vector3(1523.9229f, 1027.7963f, 10.8203f), 271.0261f));
+            #region Trucker Spawns
+            TruckerSpawn.TruckerSpawns.Add(new TruckerSpawn("LVA Freight Market", new Vector3(1470.9402f, 974.7820f, 10.8203f), 2.3979f));
+            TruckerSpawn.TruckerSpawns.Add(new TruckerSpawn("Rockshore East", new Vector3(2814.4407f, 971.6664f, 10.7500f), 170.4394f));
+            TruckerSpawn.TruckerSpawns.Add(new TruckerSpawn("Spinybed", new Vector3(2371.6941f, 2758.8669f, 10.8203f), 180.1616f));
+            TruckerSpawn.TruckerSpawns.Add(new TruckerSpawn("Whitewood Estates", new Vector3(1053.7681f, 2148.0027f, 10.8203f), 85.1938f));
+            TruckerSpawn.TruckerSpawns.Add(new TruckerSpawn("Red County", new Vector3(-49.6863f, -271.9140f, 6.6332f), 180.7621f));
+            TruckerSpawn.TruckerSpawns.Add(new TruckerSpawn("LS Docks", new Vector3(2728.5828f, -2394.4233f, 13.6328f), 185.8147f));
+            TruckerSpawn.TruckerSpawns.Add(new TruckerSpawn("LS Docks 2", new Vector3(2522.3501f, -2118.8274f, 13.5469f), 356.4000f));
+            TruckerSpawn.TruckerSpawns.Add(new TruckerSpawn("Flint County", new Vector3(-77.7715f, -1136.3878f, 1.0781f), 77.6688f));
+            TruckerSpawn.TruckerSpawns.Add(new TruckerSpawn("Fallen Tree", new Vector3(-516.2404f, -504.8649f, 25.5234f), 356.9146f));
+            TruckerSpawn.TruckerSpawns.Add(new TruckerSpawn("Doherty", new Vector3(-2136.6604f, -247.9970f, 36.4886f), 268.6135f));
+            TruckerSpawn.TruckerSpawns.Add(new TruckerSpawn("Whetstone", new Vector3(-1561.8169f, -2734.3469f, 48.7435f), 154.3250f));
+            #endregion
 
             #region Creating player classes
 
