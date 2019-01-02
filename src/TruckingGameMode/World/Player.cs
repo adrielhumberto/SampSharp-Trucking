@@ -295,6 +295,14 @@ namespace TruckingGameMode.World
             else SendClientMessage(Color.IndianRed, "You can't use commands while not spawned!");
         }
 
+        public override void OnEnterVehicle(EnterVehicleEventArgs e)
+        {
+            if(e.Vehicle.Engine == false)
+                SendClientMessage(Color.BlueViolet, $"Press 2 key to start vehicle engine.");
+
+            base.OnEnterVehicle(e);
+        }
+
         #endregion
     }
 }
