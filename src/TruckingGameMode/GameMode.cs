@@ -45,8 +45,6 @@ namespace TruckingGameMode
             {
                 BasePlayer.SendClientMessageToAll(Color.Wheat, TimedMessage.TimedMessages[_lastTimedMessage].Message);
 
-                Console.WriteLine($"{TimedMessage.TimedMessages[_lastTimedMessage].Message}. lastTimedMessage: {_lastTimedMessage}");
-
                 _lastTimedMessage++;
 
                 if (_lastTimedMessage == TimedMessage.TimedMessages.Count)
