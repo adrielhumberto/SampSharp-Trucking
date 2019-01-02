@@ -42,6 +42,19 @@ namespace TruckingGameMode.World
                 FetchPlayerAccountData().PositionZ);
         }
 
+        public void SavePlayerPosition()
+        {
+            using (var db = new GamemodeContext())
+            {
+                FetchPlayerAccountData(db).PositionX = Position.X;
+                FetchPlayerAccountData(db).PositionY = Position.Y;
+                FetchPlayerAccountData(db).PositionZ = Position.Z;
+                FetchPlayerAccountData(db).FacingAngle = Angle;
+
+                db.SaveChanges();
+            }
+        }
+
         #region Player registration system
 
         private void LoginPlayer()
@@ -165,12 +178,66 @@ namespace TruckingGameMode.World
 
         public override void OnRequestSpawn(RequestSpawnEventArgs e)
         {
+            e.PreventSpawning = true;
+
+            var dialogList = new ListDialog("Select spawn location", "Select", "Quit");
+            dialogList.AddItem("Random spawn");
+            dialogList.AddItem("Select Spawn");
+            dialogList.AddItem("Last location");
+            dialogList.Show(this);
+
             if (PlayerClass == PlayerClasses.TruckDriver)
-            {
-                var randomIndex = new Random().Next(TruckerSpawn.TruckerSpawns.Count);
-                SetSpawnInfo(0, Skin, TruckerSpawn.TruckerSpawns[randomIndex].Position,
-                    TruckerSpawn.TruckerSpawns[randomIndex].Angle);
-            }
+                dialogList.Response += (sender, ev) =>
+                {
+                    if (ev.DialogButton != DialogButton.Right)
+                    {
+                        switch (ev.ListItem)
+                        {
+                            case 0:
+                            {
+                                var randomIndex = new Random().Next(TruckerSpawn.TruckerSpawns.Count);
+                                SetSpawnInfo(0, Skin, TruckerSpawn.TruckerSpawns[randomIndex].Position,
+                                    TruckerSpawn.TruckerSpawns[randomIndex].Angle);
+                                Spawn();
+                                break;
+                            }
+                            case 1:
+                            {
+                                var dialogSpawnsList = new TablistDialog("Select spawn", 1, "Select", "Cancel");
+                                foreach (var spawn in TruckerSpawn.TruckerSpawns) dialogSpawnsList.Add(spawn.Name);
+                                dialogSpawnsList.Show(this);
+                                dialogSpawnsList.Response += (obj, eve) =>
+                                {
+                                    switch (eve.ListItem)
+                                    {
+                                        default:
+                                        {
+                                            SetSpawnInfo(0, Skin, TruckerSpawn.TruckerSpawns[eve.ListItem].Position,
+                                                TruckerSpawn.TruckerSpawns[eve.ListItem].Angle);
+                                            Spawn();
+                                        }
+                                            break;
+                                    }
+                                };
+                            }
+                                break;
+                            case 2:
+                            {
+                                SetSpawnInfo(0, Skin, GetPlayerPositionVector3FromDatabase(),
+                                    FetchPlayerAccountData().FacingAngle);
+                                Spawn();
+                            }
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        var randomIndex = new Random().Next(TruckerSpawn.TruckerSpawns.Count);
+                        SetSpawnInfo(0, Skin, TruckerSpawn.TruckerSpawns[randomIndex].Position,
+                            TruckerSpawn.TruckerSpawns[randomIndex].Angle);
+                        Spawn();
+                    }
+                };
 
             base.OnRequestSpawn(e);
         }
@@ -205,6 +272,20 @@ namespace TruckingGameMode.World
             SendClientMessageToAll(Color.White, $"{Color}{Name}[ID:{Id}]: {Color.White}{e.Text}");
 
             base.OnText(e);
+        }
+
+        public override void OnDisconnected(DisconnectEventArgs e)
+        {
+            SavePlayerPosition();
+
+            base.OnDisconnected(e);
+        }
+
+        public override void OnDeath(DeathEventArgs e)
+        {
+            SavePlayerPosition();
+
+            base.OnDeath(e);
         }
 
         #endregion
