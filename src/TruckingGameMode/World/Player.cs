@@ -62,8 +62,6 @@ namespace TruckingGameMode.World
                     else if (BCryptHelper.CheckPassword(ev.InputText, FetchPlayerAccountData().Password))
                     {
                         ToggleSpectating(false);
-                        SetSpawnInfo(NoTeam, 0, GetPlayerPositionVector3FromDatabase(), FetchPlayerAccountData().FacingAngle);
-                        Spawn();
                     }
                     else
                     {
