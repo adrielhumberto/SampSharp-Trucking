@@ -198,6 +198,15 @@ namespace TruckingGameMode.World
             base.OnSpawned(e);
         }
 
+        public override void OnText(TextEventArgs e)
+        {
+            e.SendToPlayers = false;
+
+            SendClientMessageToAll(Color.White, $"{Color}{Name}[ID:{Id}]: {Color.White}{e.Text}");
+
+            base.OnText(e);
+        }
+
         #endregion
     }
 }
