@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using SampSharp.GameMode;
 using SampSharp.GameMode.Definitions;
 using SampSharp.GameMode.Display;
 using SampSharp.GameMode.SAMP;
 using SampSharp.GameMode.SAMP.Commands;
 using SampSharp.GameMode.World;
+using TruckingGameMode.Classes.Spawns;
 
 namespace TruckingGameMode.Commands
 {
@@ -84,6 +86,26 @@ namespace TruckingGameMode.Commands
         {
             sender.ForceClassSelection();
             sender.Health = 0.0f;
+        }
+
+        [Command("rescue")]
+        public static void OnRescueCommand(BasePlayer sender)
+        {
+            var dialogSpawnsList = new TablistDialog("Select spawn", 1, "Select", "Cancel");
+            foreach (var spawn in TruckerSpawn.TruckerSpawns) dialogSpawnsList.Add(spawn.Name);
+            dialogSpawnsList.Show(sender);
+            dialogSpawnsList.Response += (obj, eve) =>
+            {
+                switch (eve.ListItem)
+                {
+                    default:
+                    {
+                        sender.Position = TruckerSpawn.TruckerSpawns[eve.ListItem].Position;
+                        sender.Angle = TruckerSpawn.TruckerSpawns[eve.ListItem].Angle;
+                    }
+                        break;
+                }
+            };
         }
     }
 }
