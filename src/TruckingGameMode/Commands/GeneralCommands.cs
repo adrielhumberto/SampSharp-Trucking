@@ -107,5 +107,14 @@ namespace TruckingGameMode.Commands
                 }
             };
         }
+
+        [Command("assist")]
+        public static void OnAssistCommand(BasePlayer sender)
+        {
+            if(sender.Vehicle == null)
+                sender.SendClientMessage(Color.IndianRed, "You are not driving any vehicle!");
+
+            sender.Vehicle?.Repair();
+        }
     }
 }
