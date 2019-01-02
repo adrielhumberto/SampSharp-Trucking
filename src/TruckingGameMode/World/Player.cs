@@ -288,6 +288,13 @@ namespace TruckingGameMode.World
             base.OnDeath(e);
         }
 
+        public override void OnCommandText(CommandTextEventArgs e)
+        {
+            if (State != PlayerState.None && State != PlayerState.Wasted)
+                base.OnCommandText(e);
+            else SendClientMessage(Color.IndianRed, "You can't use commands while not spawned!");
+        }
+
         #endregion
     }
 }
