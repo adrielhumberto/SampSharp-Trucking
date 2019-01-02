@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using SampSharp.GameMode;
-using SampSharp.GameMode.Definitions;
+﻿using SampSharp.GameMode.Definitions;
 using SampSharp.GameMode.Display;
 using SampSharp.GameMode.SAMP;
 using SampSharp.GameMode.SAMP.Commands;
@@ -21,7 +18,8 @@ namespace TruckingGameMode.Commands
                 return;
             }
 
-            receiver.SendClientMessage(Color.White, $"{Color.Gray}PM from {sender.Name}({sender.Id}): {Color.White}{message}");
+            receiver.SendClientMessage(Color.White,
+                $"{Color.Gray}PM from {sender.Name}({sender.Id}): {Color.White}{message}");
         }
 
         [Command("flip")]
@@ -43,7 +41,7 @@ namespace TruckingGameMode.Commands
         [Command("engine")]
         public static void OnEngineCommand(BasePlayer sender)
         {
-            if(sender.State != PlayerState.Driving)
+            if (sender.State != PlayerState.Driving)
             {
                 sender.SendClientMessage(Color.IndianRed, "You need to drive a car!");
                 return;
@@ -63,7 +61,7 @@ namespace TruckingGameMode.Commands
 
             dialog.Response += (obj, e) =>
             {
-                if(e.DialogButton == DialogButton.Right)
+                if (e.DialogButton == DialogButton.Right)
                     return;
 
                 switch (e.ListItem)
@@ -111,7 +109,7 @@ namespace TruckingGameMode.Commands
         [Command("assist")]
         public static void OnAssistCommand(BasePlayer sender)
         {
-            if(sender.Vehicle == null)
+            if (sender.Vehicle == null)
                 sender.SendClientMessage(Color.IndianRed, "You are not driving any vehicle!");
 
             sender.Vehicle?.Repair();
