@@ -2,12 +2,16 @@
 using SampSharp.GameMode;
 using SampSharp.GameMode.Controllers;
 using SampSharp.GameMode.Definitions;
+using SampSharp.GameMode.SAMP;
+using SampSharp.GameMode.World;
 using TruckingGameMode.Controllers;
 
 namespace TruckingGameMode
 {
     public class GameMode : BaseMode
     {
+        private int _lastTimedMessage;
+
         protected override void LoadControllers(ControllerCollection controllers)
         {
             base.LoadControllers(controllers);
@@ -35,6 +39,19 @@ namespace TruckingGameMode
             AddPlayerClass(190, new Vector3(0.0f, 0.0f, 0.0f), 0.0f); // id 1
 
             #endregion
+
+            var timedMessagesTimer = new Timer(1000 * 60 * 2, true);
+            timedMessagesTimer.Tick += (sender, ev) =>
+            {
+                BasePlayer.SendClientMessageToAll(Color.Wheat, TimedMessage.TimedMessages[_lastTimedMessage].Message);
+
+                Console.WriteLine($"{TimedMessage.TimedMessages[_lastTimedMessage].Message}. lastTimedMessage: {_lastTimedMessage}");
+
+                _lastTimedMessage++;
+
+                if (_lastTimedMessage == TimedMessage.TimedMessages.Count)
+                    _lastTimedMessage = 0;
+            };
 
             base.OnInitialized(e);
         }
