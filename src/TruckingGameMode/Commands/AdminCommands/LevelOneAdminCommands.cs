@@ -20,5 +20,14 @@ namespace TruckingGameMode.Commands.AdminCommands
 
             BasePlayer.SendClientMessageToAll(Color.IndianRed, $"{target.Name} has been kicked from the server.");
         }
+
+        [Command("repair", Shortcut = "repair")]
+        public static void OnRepairCommand(BasePlayer sender)
+        {
+            if(sender.Vehicle == null || sender.Vehicle.Driver == sender)
+                sender.SendClientMessage(Color.Wheat, "You are not driving a car.");
+
+            sender.Vehicle?.Repair();
+        }
     }
 }
