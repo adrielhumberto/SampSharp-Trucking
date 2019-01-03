@@ -20,7 +20,7 @@ namespace TruckingGameMode.World
     [PooledType]
     public class Player : BasePlayer
     {
-        private bool _isLogged;
+        public bool IsLogged;
         public PlayerClasses PlayerClass { get; set; }
         public int LoginTries { get; private set; }
 
@@ -76,7 +76,7 @@ namespace TruckingGameMode.World
                     else if (BCryptHelper.CheckPassword(ev.InputText, FetchPlayerAccountData().Password))
                     {
                         ToggleSpectating(false);
-                        _isLogged = true;
+                        IsLogged = true;
                     }
                     else
                     {
@@ -100,31 +100,26 @@ namespace TruckingGameMode.World
             dialog.Show(this);
             dialog.Response += (sender, ev) =>
             {
-                switch (ev.DialogButton)
+                if (ev.DialogButton == DialogButton.Left)
                 {
-                    case DialogButton.Left:
+                    using (var db = new GamemodeContext())
                     {
-                        using (var db = new GamemodeContext())
+                        var salt = BCryptHelper.GenerateSalt(12);
+                        var hash = BCryptHelper.HashPassword(ev.InputText, salt);
+                        var player = new PlayerModel
                         {
-                            var salt = BCryptHelper.GenerateSalt(12);
-                            var hash = BCryptHelper.HashPassword(ev.InputText, salt);
-                            var player = new PlayerModel
-                            {
-                                Password = hash,
-                                Name = Name
-                            };
-                            db.Players.Add(player);
-                            db.SaveChanges();
+                            Password = hash,
+                            Name = Name
+                        };
+                        db.Players.Add(player);
+                        db.SaveChanges();
 
-                            LoginPlayer();
-                        }
+                        LoginPlayer();
                     }
-                        break;
-                    case DialogButton.Right:
-                    {
-                        Kick();
-                    }
-                        break;
+                }
+                else
+                {
+                    Kick();
                 }
             };
         }
@@ -157,7 +152,7 @@ namespace TruckingGameMode.World
 
         public override async void OnRequestClass(RequestClassEventArgs e)
         {
-            if (!_isLogged)
+            if (!IsLogged)
             {
                 SendClientMessage(Color.IndianRed, "You did not log in successfully. You have been kicked.");
                 await Task.Delay(100);
@@ -296,13 +291,6 @@ namespace TruckingGameMode.World
             SavePlayerPosition();
 
             base.OnDeath(e);
-        }
-
-        public override void OnCommandText(CommandTextEventArgs e)
-        {
-            if (State != PlayerState.None && State != PlayerState.Wasted)
-                base.OnCommandText(e);
-            else SendClientMessage(Color.IndianRed, "You can't use commands while not spawned!");
         }
 
         public override void OnEnterVehicle(EnterVehicleEventArgs e)
