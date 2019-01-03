@@ -20,6 +20,7 @@ namespace TruckingGameMode.World
     [PooledType]
     public class Player : BasePlayer
     {
+        private bool _isLogged;
         public PlayerClasses PlayerClass { get; set; }
         public int LoginTries { get; private set; }
 
@@ -75,6 +76,7 @@ namespace TruckingGameMode.World
                     else if (BCryptHelper.CheckPassword(ev.InputText, FetchPlayerAccountData().Password))
                     {
                         ToggleSpectating(false);
+                        _isLogged = true;
                     }
                     else
                     {
@@ -85,7 +87,7 @@ namespace TruckingGameMode.World
                         LoginPlayer();
                     }
                 }
-                else if (ev.DialogButton == DialogButton.Right)
+                else
                 {
                     Kick();
                 }
@@ -153,8 +155,16 @@ namespace TruckingGameMode.World
             if (e.NewKeys == Keys.LookBehind && e.OldKeys != Keys.LookBehind) GeneralCommands.OnEngineCommand(this);
         }
 
-        public override void OnRequestClass(RequestClassEventArgs e)
+        public override async void OnRequestClass(RequestClassEventArgs e)
         {
+            if (!_isLogged)
+            {
+                SendClientMessage(Color.IndianRed, "You did not log in successfully. You have been kicked.");
+                await Task.Delay(100);
+                Kick();
+            }
+
+
             VirtualWorld = 1;
 
             #region Class setup
@@ -297,8 +307,8 @@ namespace TruckingGameMode.World
 
         public override void OnEnterVehicle(EnterVehicleEventArgs e)
         {
-            if(e.Vehicle.Engine == false)
-                SendClientMessage(Color.BlueViolet, $"Press 2 key to start vehicle engine.");
+            if (e.Vehicle.Engine == false)
+                SendClientMessage(Color.BlueViolet, "Press 2 key to start vehicle engine.");
 
             base.OnEnterVehicle(e);
         }
