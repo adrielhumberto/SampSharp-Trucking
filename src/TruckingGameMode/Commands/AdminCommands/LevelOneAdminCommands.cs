@@ -29,5 +29,14 @@ namespace TruckingGameMode.Commands.AdminCommands
 
             sender.Vehicle?.Repair();
         }
+
+        [Command("clearchat", Shortcut = "cc")]
+        public static void OnClearChatCommand(BasePlayer sender)
+        {
+            for (var i = 0; i < 100; i++)
+            {
+                BasePlayer.SendClientMessageToAll(Color.White, "");
+            }
+        }
     }
 }
