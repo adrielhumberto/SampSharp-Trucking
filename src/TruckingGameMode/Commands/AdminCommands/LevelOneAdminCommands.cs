@@ -75,5 +75,18 @@ namespace TruckingGameMode.Commands.AdminCommands
         {
             sender.SpecialAction = SpecialAction.Usejetpack;
         }
+
+        [Command("nos")]
+        public static void OnNosCommand(BasePlayer sender)
+        {
+            if (sender.Vehicle?.Driver != sender || sender.Vehicle == null)
+            {
+                sender.SendClientMessage(Color.IndianRed, "You are not driving a car.");
+                return;
+            }
+
+            sender.Vehicle?.AddComponent(1010);
+            sender.SendClientMessage(Color.GreenYellow, "You added NOS to your car.");
+        }
     }
 }
