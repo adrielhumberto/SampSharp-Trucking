@@ -50,7 +50,7 @@ namespace TruckingGameMode.Commands
             sender.Vehicle.Engine = sender.Vehicle.Engine != true;
         }
 
-        [Command("radio")]
+        [Command("listenradio")]
         public static void OnListenRadioCommand(BasePlayer sender)
         {
             var dialog = new ListDialog("Chose a radio station", "Chose", "Close");
