@@ -24,7 +24,7 @@ namespace TruckingGameMode.Commands.AdminCommands
         [Command("repair", Shortcut = "repair")]
         public static void OnRepairCommand(BasePlayer sender)
         {
-            if (sender.Vehicle == null || sender.Vehicle.Driver != sender)
+            if (sender.Vehicle == null || sender.Vehicle?.Driver != sender)
             {
                 sender.SendClientMessage(Color.Wheat, "You are not driving a car.");
                 return;
