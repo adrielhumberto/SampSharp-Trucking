@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using SampSharp.GameMode.Definitions;
 using SampSharp.GameMode.SAMP;
 using SampSharp.GameMode.SAMP.Commands;
 using SampSharp.GameMode.World;
@@ -67,6 +68,12 @@ namespace TruckingGameMode.Commands.AdminCommands
 
             target.SendClientMessage(Color.GreenYellow, $"You have been teleported to admin {sender.Name}.");
             sender.SendClientMessage(Color.GreenYellow, $"You teleported {target.Name} to you.");
+        }
+
+        [Command("jetpack")]
+        public static void OnJetpackCommand(BasePlayer sender)
+        {
+            sender.SpecialAction = SpecialAction.Usejetpack;
         }
     }
 }
