@@ -41,5 +41,14 @@ namespace TruckingGameMode.Commands.AdminCommands
                 BasePlayer.SendClientMessageToAll(Color.White, "");
             }
         }
+
+        [Command("announce", Shortcut = "ann")]
+        public static void OnAnnounceCommand(BasePlayer sender, string message)
+        {
+            if(string.IsNullOrEmpty(message))
+                return;
+
+            BasePlayer.GameTextForAll(message, 5000, 4);
+        }
     }
 }
