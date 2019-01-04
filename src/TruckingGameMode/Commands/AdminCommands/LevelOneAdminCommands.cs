@@ -59,5 +59,14 @@ namespace TruckingGameMode.Commands.AdminCommands
             sender.SendClientMessage(Color.GreenYellow, $"You teleported to {target.Name}.");
             target.SendClientMessage(Color.GreenYellow, $"Admin {sender.Name} teleported to you.");
         }
+
+        [Command("get")]
+        public static void OnGetCommand(BasePlayer sender, BasePlayer target)
+        {
+            target.Position = sender.Position;
+
+            target.SendClientMessage(Color.GreenYellow, $"You have been teleported to admin {sender.Name}.");
+            sender.SendClientMessage(Color.GreenYellow, $"You teleported {target.Name} to you.");
+        }
     }
 }
