@@ -274,6 +274,16 @@ namespace TruckingGameMode.World
         {
             e.SendToPlayers = false;
 
+            if(FetchPlayerAccountData().AdminLevel > 0)
+            {
+                if (e.Text.StartsWith('@'))
+                {
+                    SendMessageToAdmins(Color.Gold, $"[AC] {Name}: {e.Text.Remove(0, 1)}");
+                    return;
+                }
+            }
+
+
             SendClientMessageToAll(Color.White, $"{Color}{Name}[ID:{Id}]: {Color.White}{e.Text}");
 
             base.OnText(e);
@@ -302,5 +312,14 @@ namespace TruckingGameMode.World
         }
 
         #endregion
+
+        public static void SendMessageToAdmins(Color color, string message)
+        {
+            foreach (var admin in BasePlayer.All)
+            {
+                if (admin is Player adminData && adminData.FetchPlayerAccountData().AdminLevel > 0)
+                    admin.SendClientMessage(color, message);
+            }
+        }
     }
 }
