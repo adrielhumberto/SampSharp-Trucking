@@ -50,5 +50,14 @@ namespace TruckingGameMode.Commands.AdminCommands
 
             BasePlayer.GameTextForAll(message, 5000, 4);
         }
+
+        [Command("port")]
+        public static void OnPortCommand(BasePlayer sender, BasePlayer target)
+        {
+            sender.Position = target.Position;
+
+            sender.SendClientMessage(Color.GreenYellow, $"You teleported to {target.Name}.");
+            target.SendClientMessage(Color.GreenYellow, $"Admin {sender.Name} teleported to you.");
+        }
     }
 }
