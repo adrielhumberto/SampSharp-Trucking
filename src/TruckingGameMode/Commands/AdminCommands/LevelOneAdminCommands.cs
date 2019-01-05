@@ -106,5 +106,11 @@ namespace TruckingGameMode.Commands.AdminCommands
 
             sender.SendClientMessage(Color.GreenYellow, $"You teleported to X: {x}, Y: {y}, Z: {z}");
         }
+
+        [Command("networkstats")]
+        public static void OnNetworkStatsCommand(BasePlayer sender)
+        {
+            sender.SendClientMessage(Color.White, $"{Server.NetworkStats}");
+        }
     }
 }
