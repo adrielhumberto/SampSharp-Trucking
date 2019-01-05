@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using SampSharp.GameMode;
 using SampSharp.GameMode.Definitions;
 using SampSharp.GameMode.SAMP;
 using SampSharp.GameMode.SAMP.Commands;
@@ -96,6 +97,14 @@ namespace TruckingGameMode.Commands.AdminCommands
 
             target1.SendClientMessage(Color.GreenYellow, $"You have been teleported to {target2.Name}.");
             target2.SendClientMessage(Color.GreenYellow, $"{target1.Name} have been teleported to you.");
+        }
+
+        [Command("portloc")]
+        public static void OnPortLocCommand(BasePlayer sender, float x, float y, float z)
+        {
+            sender.Position = new Vector3(x, y, z);
+
+            sender.SendClientMessage(Color.GreenYellow, $"You teleported to X: {x}, Y: {y}, Z: {z}");
         }
     }
 }
