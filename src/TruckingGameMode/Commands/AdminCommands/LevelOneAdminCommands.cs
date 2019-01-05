@@ -88,5 +88,14 @@ namespace TruckingGameMode.Commands.AdminCommands
             sender.Vehicle?.AddComponent(1010);
             sender.SendClientMessage(Color.GreenYellow, "You added NOS to your car.");
         }
+
+        [Command("tele")]
+        public static void OnTeleCommand(BasePlayer sender, BasePlayer target1, BasePlayer target2)
+        {
+            target1.Position = target2.Position;
+
+            target1.SendClientMessage(Color.GreenYellow, $"You have been teleported to {target2.Name}.");
+            target2.SendClientMessage(Color.GreenYellow, $"{target1.Name} have been teleported to you.");
+        }
     }
 }
