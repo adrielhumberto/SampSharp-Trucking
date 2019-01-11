@@ -4,6 +4,7 @@ using SampSharp.GameMode.SAMP;
 using SampSharp.GameMode.SAMP.Commands;
 using SampSharp.GameMode.World;
 using TruckingGameMode.Classes.Spawns;
+using TruckingGameMode.World;
 
 namespace TruckingGameMode.Commands
 {
@@ -113,6 +114,19 @@ namespace TruckingGameMode.Commands
                 sender.SendClientMessage(Color.IndianRed, "You are not driving any vehicle!");
 
             sender.Vehicle?.Repair();
+        }
+
+        [Command("admins")]
+        public static void OnAdminsCommand(BasePlayer sender)
+        {
+            var listDialog = new ListDialog("Admin List", "Ok");
+            foreach (var admin in BasePlayer.All)
+            {
+                var adminData = admin as Player;
+                if(adminData?.FetchPlayerAccountData().AdminLevel > 0)
+                    listDialog.AddItem(adminData.Name);
+            }
+            listDialog.Show(sender);
         }
     }
 }
