@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Globalization;
 using SampSharp.GameMode;
 using SampSharp.GameMode.Controllers;
 using SampSharp.GameMode.Definitions;
-using SampSharp.GameMode.Display;
 using SampSharp.GameMode.Events;
 using SampSharp.GameMode.SAMP;
 using SampSharp.GameMode.World;
 using SampSharp.Streamer.World;
-using TruckingGameMode.Classes;
 using TruckingGameMode.Classes.Jobs.Trucker;
 using TruckingGameMode.Controllers;
 using TruckingGameMode.World;
@@ -17,6 +14,7 @@ namespace TruckingGameMode
 {
     public class GameMode : BaseMode
     {
+        private Timer _jobListRefresh;
         private int _lastTimedMessage;
 
         protected override void LoadControllers(ControllerCollection controllers)
@@ -62,6 +60,10 @@ namespace TruckingGameMode
 
             #endregion
 
+            #region JobLocations setup
+
+            _jobListRefresh = new Timer(600000, true);
+            _jobListRefresh.Tick += _jobListRefresh_Tick;
 
             foreach (var joblocation in TruckerJobLocation.JobLocations)
             {
@@ -74,14 +76,20 @@ namespace TruckingGameMode
                 joblocation.Checkpoint.Enter += TruckerJobHandling.TruckerJobCheckpoint_Enter;
             }
 
+            #endregion
 
             base.OnInitialized(e);
+        }
+
+        private void _jobListRefresh_Tick(object sender, EventArgs e)
+        {
+            foreach (var jobLocation in TruckerJobLocation.JobLocations)
+                jobLocation.JobList = TruckerJobDetails.GenerateJobList(jobLocation);
         }
 
         protected override void OnPlayerCommandText(BasePlayer player, CommandTextEventArgs e)
         {
             if (player is Player playerData && playerData.IsLogged) base.OnPlayerCommandText(player, e);
         }
-
     }
 }
