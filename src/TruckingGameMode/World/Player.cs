@@ -101,6 +101,7 @@ namespace TruckingGameMode.World
                     {
                         ToggleSpectating(false);
                         IsLogged = true;
+                        base.Money = Money;
                     }
                     else
                     {
