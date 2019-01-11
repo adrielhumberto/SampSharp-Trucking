@@ -1,10 +1,15 @@
 ﻿using System;
+using System.Globalization;
 using SampSharp.GameMode;
 using SampSharp.GameMode.Controllers;
 using SampSharp.GameMode.Definitions;
+using SampSharp.GameMode.Display;
 using SampSharp.GameMode.Events;
 using SampSharp.GameMode.SAMP;
 using SampSharp.GameMode.World;
+using SampSharp.Streamer.World;
+using TruckingGameMode.Classes;
+using TruckingGameMode.Classes.Jobs.Trucker;
 using TruckingGameMode.Controllers;
 using TruckingGameMode.World;
 
@@ -42,6 +47,8 @@ namespace TruckingGameMode
 
             #endregion
 
+            #region Timed info messages
+
             var timedMessagesTimer = new Timer(1000 * 60 * 2, true);
             timedMessagesTimer.Tick += (sender, ev) =>
             {
@@ -53,15 +60,28 @@ namespace TruckingGameMode
                     _lastTimedMessage = 0;
             };
 
+            #endregion
+
+
+            foreach (var joblocation in TruckerJobLocation.JobLocations)
+            {
+                joblocation.MapIcon =
+                    new DynamicMapIcon(joblocation.Position, 51, MapIconType.Global, streamDistance: 150);
+                joblocation.Checkpoint = new DynamicCheckpoint(joblocation.Position, 4f);
+
+                joblocation.JobList = TruckerJobDetails.GenerateJobList(joblocation);
+
+                joblocation.Checkpoint.Enter += TruckerJobHandling.TruckerJobCheckpoint_Enter;
+            }
+
+
             base.OnInitialized(e);
         }
 
         protected override void OnPlayerCommandText(BasePlayer player, CommandTextEventArgs e)
         {
-            if (player is Player playerData && playerData.IsLogged)
-            {
-                base.OnPlayerCommandText(player, e);
-            }
+            if (player is Player playerData && playerData.IsLogged) base.OnPlayerCommandText(player, e);
         }
+
     }
 }

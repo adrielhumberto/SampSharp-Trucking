@@ -12,6 +12,7 @@ using SampSharp.GameMode.Pools;
 using SampSharp.GameMode.SAMP;
 using SampSharp.GameMode.World;
 using TruckingGameMode.Classes;
+using TruckingGameMode.Classes.Jobs.Trucker;
 using TruckingGameMode.Classes.Spawns;
 using TruckingGameMode.Commands;
 
@@ -23,6 +24,22 @@ namespace TruckingGameMode.World
         public bool IsLogged;
         public PlayerClasses PlayerClass { get; set; }
         public int LoginTries { get; private set; }
+        public TruckerJobDetails CurrentJob { get; set; }
+
+        public override int Money
+        {
+            get => FetchPlayerAccountData().Money;
+            set
+            {
+                using (var db = new GamemodeContext())
+                {
+                    FetchPlayerAccountData(db).Money = value;
+                    db.SaveChanges();
+                }
+
+                base.Money = FetchPlayerAccountData().Money;
+            }
+        }
 
         public PlayerModel FetchPlayerAccountData()
         {
@@ -54,6 +71,13 @@ namespace TruckingGameMode.World
 
                 db.SaveChanges();
             }
+        }
+
+        public static void SendMessageToAdmins(Color color, string message)
+        {
+            foreach (var admin in All)
+                if (admin is Player adminData && adminData.FetchPlayerAccountData().AdminLevel > 0)
+                    admin.SendClientMessage(color, message);
         }
 
         #region Player registration system
@@ -101,7 +125,6 @@ namespace TruckingGameMode.World
             dialog.Response += (sender, ev) =>
             {
                 if (ev.DialogButton == DialogButton.Left)
-                {
                     using (var db = new GamemodeContext())
                     {
                         var salt = BCryptHelper.GenerateSalt(12);
@@ -116,11 +139,8 @@ namespace TruckingGameMode.World
 
                         LoginPlayer();
                     }
-                }
                 else
-                {
                     Kick();
-                }
             };
         }
 
@@ -274,14 +294,12 @@ namespace TruckingGameMode.World
         {
             e.SendToPlayers = false;
 
-            if(FetchPlayerAccountData().AdminLevel > 0)
-            {
+            if (FetchPlayerAccountData().AdminLevel > 0)
                 if (e.Text.StartsWith('@'))
                 {
                     SendMessageToAdmins(Color.Gold, $"[AC] {Name}: {e.Text.Remove(0, 1)}");
                     return;
                 }
-            }
 
 
             SendClientMessageToAll(Color.White, $"{Color}{Name}[ID:{Id}]: {Color.White}{e.Text}");
@@ -292,6 +310,11 @@ namespace TruckingGameMode.World
         public override void OnDisconnected(DisconnectEventArgs e)
         {
             SavePlayerPosition();
+            if (CurrentJob != null)
+            {
+                CurrentJob.Truck.Dispose();
+                CurrentJob.Trailer.Dispose();
+            }
 
             base.OnDisconnected(e);
         }
@@ -312,14 +335,5 @@ namespace TruckingGameMode.World
         }
 
         #endregion
-
-        public static void SendMessageToAdmins(Color color, string message)
-        {
-            foreach (var admin in BasePlayer.All)
-            {
-                if (admin is Player adminData && adminData.FetchPlayerAccountData().AdminLevel > 0)
-                    admin.SendClientMessage(color, message);
-            }
-        }
     }
 }
