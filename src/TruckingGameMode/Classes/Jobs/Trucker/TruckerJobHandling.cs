@@ -63,10 +63,14 @@ namespace TruckingGameMode.Classes.Jobs.Trucker
                                     jobLocation.JobList.Remove(player.CurrentJob);
                                     jobLocation.JobList.TrimExcess();
 
+                                    if (jobLocation.JobList.Count == 0)
+                                        jobLocation.JobList = TruckerJobDetails.GenerateJobList(jobLocation);
+
                                     player.CurrentJob.JobType = TruckerJobType.QuickJob;
 
                                     player.CurrentJob.Truck = BaseVehicle.Create(VehicleModelType.Roadtrain,
                                         jobLocation.SpawnPosition, jobLocation.SpawnRotation, 2, 3);
+
                                     player.CurrentJob.Trailer = BaseVehicle.Create(VehicleModelType.ArticleTrailer,
                                         jobLocation.SpawnPosition, jobLocation.SpawnRotation, 2, 3);
 
