@@ -13,5 +13,21 @@ namespace GamemodeDatabase
 
             base.OnConfiguring(optionsBuilder);
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<PlayerModel>(entity =>
+            {
+                entity.Property(e => e.PositionX)
+                    .HasDefaultValue(1470.9402);
+
+                entity.Property(e => e.PositionY)
+                    .HasDefaultValue(974.7820);
+
+                entity.Property(e => e.PositionZ)
+                    .HasDefaultValue(10.8203);
+            });
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }
