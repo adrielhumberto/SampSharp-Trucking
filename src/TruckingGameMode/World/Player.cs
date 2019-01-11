@@ -206,7 +206,7 @@ namespace TruckingGameMode.World
         {
             e.PreventSpawning = true;
 
-            var dialogList = new ListDialog("Select spawn location", "Select", "Quit");
+            var dialogList = new ListDialog("Select spawn location", "Select", "Random");
             dialogList.AddItem("Random spawn");
             dialogList.AddItem("Select Spawn");
             dialogList.AddItem("Last location");
