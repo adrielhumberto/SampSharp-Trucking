@@ -35,6 +35,9 @@ namespace TruckingGameMode
             DisableInteriorEnterExits();
             UsePlayerPedAnimations();
 
+            SetGameModeText("Trucking#");
+            SendRconCommand("hostname Trucking Evolved");
+
             #endregion
 
             #region Creating player classes
