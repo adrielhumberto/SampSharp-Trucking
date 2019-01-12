@@ -10,87 +10,23 @@ using TruckingGameMode.World;
 
 namespace TruckingGameMode.Classes.Jobs.Trucker
 {
-    public class TruckerJobHandling
+    public static class TruckerJobHandling
     {
         public static void TruckerJobCheckpoint_Enter(object sender, PlayerEventArgs e)
         {
             var player = e.Player as Player;
-            if (player?.PlayerClass == PlayerClasses.TruckDriver)
-            {
-                var checkpoint = sender as DynamicCheckpoint;
-                var jobLocation = TruckerJobLocation.JobLocations.Find(x => x.Checkpoint == checkpoint);
+            if (player?.PlayerClass != PlayerClasses.TruckDriver)
+                return;
 
-                CompletePlayerJob(player, jobLocation);
+            var checkpoint = sender as DynamicCheckpoint;
+            var jobLocation = TruckerJobLocation.JobLocations.Find(x => x.Checkpoint == checkpoint);
 
-                var choseDialog = new ListDialog("Select an option", "Select", "Close");
-                choseDialog.AddItem("Quick Job");
-                choseDialog.AddItem("Freight Market");
-                choseDialog.AddItem("Cargo Market");
+            CompletePlayerJob(player, jobLocation);
 
-                choseDialog.Show(player);
-                choseDialog.Response += (obj, ev) =>
-                {
-                    if (ev.DialogButton == DialogButton.Right)
-                        return;
-
-                    if (ev.ListItem == 0)
-                    {
-                        var quickJobDialog = new TablistDialog("Chose a cargo", 4, "Select", "Back")
-                        {
-                            Style = DialogStyle.TablistHeaders
-                        };
-
-                        quickJobDialog.Add("Cargo", "Price/km", "Weight", "Destination");
-                        foreach (var job in jobLocation.JobList)
-                            quickJobDialog.Add(job.JobCargo.Name,
-                                $"${job.MoneyAwarded}/km",
-                                $"{job.CargoWeight}T",
-                                job.EndLocation.Name);
-                        quickJobDialog.Show(player);
-
-                        quickJobDialog.Response += (objSender, evv) =>
-                        {
-                            if (evv.DialogButton == DialogButton.Right)
-                            {
-                                choseDialog.Show(player);
-                            }
-                            else
-                            {
-                                if (player.CurrentJob is null)
-                                {
-                                    player.CurrentJob = jobLocation.JobList[evv.ListItem];
-
-                                    jobLocation.JobList.Remove(player.CurrentJob);
-                                    jobLocation.JobList.TrimExcess();
-
-                                    if (jobLocation.JobList.Count == 0)
-                                        jobLocation.JobList = TruckerJobDetails.GenerateJobList(jobLocation);
-
-                                    player.CurrentJob.JobType = TruckerJobType.QuickJob;
-
-                                    player.CurrentJob.Truck = BaseVehicle.Create(VehicleModelType.Roadtrain,
-                                        jobLocation.SpawnPosition, jobLocation.SpawnRotation, 2, 3);
-
-                                    player.CurrentJob.Trailer = BaseVehicle.Create(VehicleModelType.ArticleTrailer,
-                                        jobLocation.SpawnPosition, jobLocation.SpawnRotation, 2, 3);
-
-                                    player.PutInVehicle(player.CurrentJob.Truck);
-                                    player.CurrentJob.Truck.Trailer = player.CurrentJob.Trailer;
-
-                                    player.CurrentJob.Truck.Engine = true;
-                                }
-                                else
-                                {
-                                    player.SendClientMessage(Color.IndianRed, "You already have a job!");
-                                }
-                            }
-                        };
-                    }
-                };
-            }
+            ShowJobMenuToPlayer(player, jobLocation);
         }
 
-        public static void CompletePlayerJob(Player player, TruckerJobLocation location)
+        private static void CompletePlayerJob(Player player, TruckerJobLocation location)
         {
             if (player.CurrentJob is null)
                 return;
@@ -123,6 +59,89 @@ namespace TruckingGameMode.Classes.Jobs.Trucker
             }
 
             player.CurrentJob = null;
+        }
+
+        private static void ShowJobListToPlayer(Player player, TruckerJobLocation jobLocation, TruckerJobType type)
+        {
+            var selectJobDialog = new TablistDialog("Chose a cargo", 4, "Select", "Back")
+            {
+                Style = DialogStyle.TablistHeaders
+            };
+
+            selectJobDialog.Add("Cargo", "Price/km", "Weight", "Destination");
+
+            foreach (var job in jobLocation.JobList)
+                selectJobDialog.Add(job.JobCargo.Name,
+                                    $"${job.MoneyAwarded}/km",
+                                    $"{job.CargoWeight}T",
+                                    job.EndLocation.Name);
+
+            selectJobDialog.Show(player);
+
+            selectJobDialog.Response += (sender, e) => SelectJobDialog_Response(sender, e, player, type, jobLocation);
+        }
+
+        private static void SelectJobDialog_Response(object sender, DialogResponseEventArgs e, Player player,
+            TruckerJobType type, TruckerJobLocation jobLocation)
+        {
+            if (type == TruckerJobType.QuickJob)
+            {
+                if (e.DialogButton == DialogButton.Right)
+                {
+                    ShowJobMenuToPlayer(player, jobLocation);
+                }
+                else
+                {
+                    if (player.CurrentJob is null)
+                    {
+                        player.CurrentJob = jobLocation.JobList[e.ListItem];
+
+                        jobLocation.JobList.Remove(player.CurrentJob);
+                        jobLocation.JobList.TrimExcess();
+
+                        if (jobLocation.JobList.Count == 0)
+                            jobLocation.JobList = TruckerJobDetails.GenerateJobList(jobLocation);
+
+                        player.CurrentJob.JobType = TruckerJobType.QuickJob;
+
+                        player.CurrentJob.Truck = BaseVehicle.Create(VehicleModelType.Roadtrain,
+                            jobLocation.SpawnPosition, jobLocation.SpawnRotation, 2, 3);
+
+                        player.CurrentJob.Trailer = BaseVehicle.Create(VehicleModelType.ArticleTrailer,
+                            jobLocation.SpawnPosition, jobLocation.SpawnRotation, 2, 3);
+
+                        player.PutInVehicle(player.CurrentJob.Truck);
+                        player.CurrentJob.Truck.Trailer = player.CurrentJob.Trailer;
+
+                        player.CurrentJob.Truck.Engine = true;
+                    }
+                    else
+                    {
+                        player.SendClientMessage(Color.IndianRed, "You already have a job!");
+                    }
+                }
+            }
+        }
+
+        private static void ShowJobMenuToPlayer(Player player, TruckerJobLocation jobLocation)
+        {
+            var jobMenuDialog = new ListDialog("Select an option", "Select", "Close");
+            jobMenuDialog.AddItem("Quick Job");
+            jobMenuDialog.AddItem("Freight Market");
+            jobMenuDialog.AddItem("Cargo Market");
+
+            jobMenuDialog.Show(player);
+
+            jobMenuDialog.Response += (sender, e) => ChoseDialog_Response(sender, e, player, jobLocation);
+        }
+
+        private static void ChoseDialog_Response(object sender, DialogResponseEventArgs e, Player player,
+            TruckerJobLocation jobLocation)
+        {
+            if (e.DialogButton == DialogButton.Right)
+                return;
+
+            if (e.ListItem == 0) ShowJobListToPlayer(player, jobLocation, TruckerJobType.QuickJob);
         }
     }
 }
