@@ -65,15 +65,15 @@ namespace TruckingGameMode
             _jobListRefresh = new Timer(600000, true);
             _jobListRefresh.Tick += _jobListRefresh_Tick;
 
-            foreach (var joblocation in TruckerJobLocation.JobLocations)
+            foreach (var jobLocation in TruckerJobLocation.JobLocations)
             {
-                joblocation.MapIcon =
-                    new DynamicMapIcon(joblocation.Position, 51, MapIconType.Global, streamDistance: 150);
-                joblocation.Checkpoint = new DynamicCheckpoint(joblocation.Position, 4f);
+                jobLocation.MapIcon =
+                    new DynamicMapIcon(jobLocation.Position, 51, MapIconType.Global, streamDistance: 150);
+                jobLocation.Checkpoint = new DynamicCheckpoint(jobLocation.Position, 4f);
 
-                joblocation.JobList = TruckerJobDetails.GenerateJobList(joblocation);
+                jobLocation.JobList = TruckerJobDetails.GenerateJobList(jobLocation);
 
-                joblocation.Checkpoint.Enter += TruckerJobHandling.TruckerJobCheckpoint_Enter;
+                jobLocation.Checkpoint.Enter += TruckerJobHandling.TruckerJobCheckpoint_Enter;
             }
 
             #endregion

@@ -48,7 +48,7 @@ namespace TruckingGameMode.Classes.Jobs.Trucker
                                 job.EndLocation.Name);
                         quickJobDialog.Show(player);
 
-                        quickJobDialog.Response += (objj, evv) =>
+                        quickJobDialog.Response += (objSender, evv) =>
                         {
                             if (evv.DialogButton == DialogButton.Right)
                             {
