@@ -21,7 +21,8 @@ namespace TruckingGameMode.Classes.Jobs.Trucker
             var checkpoint = sender as DynamicCheckpoint;
             var jobLocation = TruckerJobLocation.JobLocations.Find(x => x.Checkpoint == checkpoint);
 
-            CompletePlayerJob(player, jobLocation);
+            if (player.CurrentJob != null)
+                CompletePlayerJob(player, jobLocation);
 
             ShowJobMenuToPlayer(player, jobLocation);
         }
@@ -72,9 +73,9 @@ namespace TruckingGameMode.Classes.Jobs.Trucker
 
             foreach (var job in jobLocation.JobList)
                 selectJobDialog.Add(job.JobCargo.Name,
-                                    $"${job.MoneyAwarded}/km",
-                                    $"{job.CargoWeight}T",
-                                    job.EndLocation.Name);
+                    $"${job.MoneyAwarded}/km",
+                    $"{job.CargoWeight}T",
+                    job.EndLocation.Name);
 
             selectJobDialog.Show(player);
 
@@ -84,41 +85,116 @@ namespace TruckingGameMode.Classes.Jobs.Trucker
         private static void SelectJobDialog_Response(object sender, DialogResponseEventArgs e, Player player,
             TruckerJobType type, TruckerJobLocation jobLocation)
         {
-            if (type == TruckerJobType.QuickJob)
+            switch (type)
             {
-                if (e.DialogButton == DialogButton.Right)
-                {
+                case TruckerJobType.QuickJob when e.DialogButton == DialogButton.Right:
                     ShowJobMenuToPlayer(player, jobLocation);
-                }
-                else
+                    break;
+                case TruckerJobType.QuickJob when player.CurrentJob is null:
                 {
-                    if (player.CurrentJob is null)
+                    player.CurrentJob = jobLocation.JobList[e.ListItem];
+
+                    jobLocation.JobList.Remove(player.CurrentJob);
+                    jobLocation.JobList.TrimExcess();
+
+                    if (jobLocation.JobList.Count == 0)
+                        jobLocation.JobList = TruckerJobDetails.GenerateJobList(jobLocation);
+
+                    player.CurrentJob.JobType = TruckerJobType.QuickJob;
+
+                    player.CurrentJob.Truck = BaseVehicle.Create(VehicleModelType.Roadtrain,
+                        jobLocation.SpawnPosition, jobLocation.SpawnRotation, 2, 3);
+
+                    player.CurrentJob.Trailer = BaseVehicle.Create(VehicleModelType.ArticleTrailer,
+                        jobLocation.SpawnPosition, jobLocation.SpawnRotation, 2, 3);
+
+                    player.PutInVehicle(player.CurrentJob.Truck);
+                    player.CurrentJob.Truck.Trailer = player.CurrentJob.Trailer;
+
+                    player.CurrentJob.Truck.Engine = true;
+                    break;
+                }
+                case TruckerJobType.QuickJob:
+                    player.SendClientMessage(Color.IndianRed, "You already have a job!");
+                    break;
+                case TruckerJobType.FreightMarket when e.DialogButton == DialogButton.Right:
+                    ShowJobMenuToPlayer(player, jobLocation);
+                    break;
+                case TruckerJobType.FreightMarket when player.CurrentJob is null:
+                {
+                    if (player.Vehicle is null)
                     {
-                        player.CurrentJob = jobLocation.JobList[e.ListItem];
+                        player.SendClientMessage(Color.IndianRed, "You are not driving any truck!");
+                        return;
+                    }
 
-                        jobLocation.JobList.Remove(player.CurrentJob);
-                        jobLocation.JobList.TrimExcess();
+                    player.CurrentJob = jobLocation.JobList[e.ListItem];
 
-                        if (jobLocation.JobList.Count == 0)
-                            jobLocation.JobList = TruckerJobDetails.GenerateJobList(jobLocation);
+                    jobLocation.JobList.Remove(player.CurrentJob);
+                    jobLocation.JobList.TrimExcess();
 
-                        player.CurrentJob.JobType = TruckerJobType.QuickJob;
+                    if (jobLocation.JobList.Count == 0)
+                        jobLocation.JobList = TruckerJobDetails.GenerateJobList(jobLocation);
 
-                        player.CurrentJob.Truck = BaseVehicle.Create(VehicleModelType.Roadtrain,
-                            jobLocation.SpawnPosition, jobLocation.SpawnRotation, 2, 3);
+                    player.CurrentJob.JobType = TruckerJobType.FreightMarket;
 
-                        player.CurrentJob.Trailer = BaseVehicle.Create(VehicleModelType.ArticleTrailer,
-                            jobLocation.SpawnPosition, jobLocation.SpawnRotation, 2, 3);
+                    player.CurrentJob.Truck = player.Vehicle;
 
-                        player.PutInVehicle(player.CurrentJob.Truck);
-                        player.CurrentJob.Truck.Trailer = player.CurrentJob.Trailer;
+                    player.CurrentJob.Trailer = BaseVehicle.Create(VehicleModelType.ArticleTrailer,
+                        jobLocation.SpawnPosition, jobLocation.SpawnRotation, 2, 3);
 
-                        player.CurrentJob.Truck.Engine = true;
+                    player.CurrentJob.Truck.Trailer = player.CurrentJob.Trailer;
+
+                    player.CurrentJob.Truck.Engine = true;
+                    break;
+                }
+                case TruckerJobType.FreightMarket:
+                    player.SendClientMessage(Color.IndianRed, "You already have a job!");
+                    break;
+                default:
+                {
+                    if (e.DialogButton == DialogButton.Right)
+                    {
+                        ShowJobMenuToPlayer(player, jobLocation);
                     }
                     else
                     {
-                        player.SendClientMessage(Color.IndianRed, "You already have a job!");
+                        if (player.CurrentJob is null)
+                        {
+                            if (player.Vehicle is null)
+                            {
+                                player.SendClientMessage(Color.IndianRed, "You are not driving any truck!");
+                                return;
+                            }
+
+                            if (player.Vehicle.Trailer is null)
+                            {
+                                player.SendClientMessage(Color.IndianRed, "You are not having a trailer attached!");
+                                return;
+                            }
+
+                            player.CurrentJob = jobLocation.JobList[e.ListItem];
+
+                            jobLocation.JobList.Remove(player.CurrentJob);
+                            jobLocation.JobList.TrimExcess();
+
+                            if (jobLocation.JobList.Count == 0)
+                                jobLocation.JobList = TruckerJobDetails.GenerateJobList(jobLocation);
+
+                            player.CurrentJob.JobType = TruckerJobType.CargoMarket;
+
+                            player.CurrentJob.Truck = player.Vehicle;
+                            player.CurrentJob.Trailer = player.Vehicle.Trailer;
+
+                            player.CurrentJob.Truck.Engine = true;
+                        }
+                        else
+                        {
+                            player.SendClientMessage(Color.IndianRed, "You already have a job!");
+                        }
                     }
+
+                    break;
                 }
             }
         }
@@ -141,7 +217,20 @@ namespace TruckingGameMode.Classes.Jobs.Trucker
             if (e.DialogButton == DialogButton.Right)
                 return;
 
-            if (e.ListItem == 0) ShowJobListToPlayer(player, jobLocation, TruckerJobType.QuickJob);
+            switch (e.ListItem)
+            {
+                case 0:
+                    ShowJobListToPlayer(player, jobLocation, TruckerJobType.QuickJob);
+                    break;
+                case 1:
+                    ShowJobListToPlayer(player, jobLocation, TruckerJobType.FreightMarket);
+                    break;
+                case 2:
+                    ShowJobListToPlayer(player, jobLocation, TruckerJobType.CargoMarket);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }
