@@ -53,10 +53,15 @@ namespace TruckingGameMode.Classes.Jobs.Trucker
             player.Money += (int) Math.Round(moneyEarned);
             player.SendClientMessage(Color.GreenYellow, $"You earned ${(int) Math.Round(moneyEarned)}");
 
-            if (player.CurrentJob.JobType == TruckerJobType.QuickJob)
+            switch (player.CurrentJob.JobType)
             {
-                player.CurrentJob.Truck.Dispose();
-                player.CurrentJob.Trailer.Dispose();
+                case TruckerJobType.QuickJob:
+                    player.CurrentJob.Truck.Dispose();
+                    player.CurrentJob.Trailer.Dispose();
+                    break;
+                case TruckerJobType.FreightMarket:
+                    player.CurrentJob.Trailer.Dispose();
+                    break;
             }
 
             player.CurrentJob = null;
