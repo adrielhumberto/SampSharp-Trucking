@@ -53,7 +53,7 @@ namespace TruckingGameMode.Commands.AdminCommands
             BasePlayer.GameTextForAll(message, 5000, 4);
         }
 
-        [Command("port")]
+        [Command("port", Shortcut = "port")]
         public static void OnPortCommand(BasePlayer sender, BasePlayer target)
         {
             sender.Position = target.Position;
@@ -62,7 +62,7 @@ namespace TruckingGameMode.Commands.AdminCommands
             target.SendClientMessage(Color.GreenYellow, $"Admin {sender.Name} teleported to you.");
         }
 
-        [Command("get")]
+        [Command("get", Shortcut = "get")]
         public static void OnGetCommand(BasePlayer sender, BasePlayer target)
         {
             target.Position = sender.Position;
@@ -71,13 +71,13 @@ namespace TruckingGameMode.Commands.AdminCommands
             sender.SendClientMessage(Color.GreenYellow, $"You teleported {target.Name} to you.");
         }
 
-        [Command("jetpack")]
+        [Command("jetpack", Shortcut = "jetpack")]
         public static void OnJetpackCommand(BasePlayer sender)
         {
             sender.SpecialAction = SpecialAction.Usejetpack;
         }
 
-        [Command("nos")]
+        [Command("nos", Shortcut = "nos")]
         public static void OnNosCommand(BasePlayer sender)
         {
             if (sender.Vehicle?.Driver != sender || sender.Vehicle == null)
@@ -90,7 +90,7 @@ namespace TruckingGameMode.Commands.AdminCommands
             sender.SendClientMessage(Color.GreenYellow, "You added NOS to your car.");
         }
 
-        [Command("tele")]
+        [Command("tele", Shortcut = "tele")]
         public static void OnTeleCommand(BasePlayer sender, BasePlayer target1, BasePlayer target2)
         {
             target1.Position = target2.Position;
@@ -99,7 +99,7 @@ namespace TruckingGameMode.Commands.AdminCommands
             target2.SendClientMessage(Color.GreenYellow, $"{target1.Name} have been teleported to you.");
         }
 
-        [Command("portloc")]
+        [Command("portloc", Shortcut = "portloc")]
         public static void OnPortLocCommand(BasePlayer sender, float x, float y, float z)
         {
             sender.Position = new Vector3(x, y, z);
@@ -107,7 +107,7 @@ namespace TruckingGameMode.Commands.AdminCommands
             sender.SendClientMessage(Color.GreenYellow, $"You teleported to X: {x}, Y: {y}, Z: {z}");
         }
 
-        [Command("networkstats")]
+        [Command("networkstats", Shortcut = "networkstats")]
         public static void OnNetworkStatsCommand(BasePlayer sender)
         {
             sender.SendClientMessage(Color.White, $"{Server.NetworkStats}");
