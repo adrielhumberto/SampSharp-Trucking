@@ -116,10 +116,19 @@ namespace TruckingGameMode.Commands.AdminCommands
         [Command("freeze", Shortcut = "freeze")]
         public static void OnFreezeCommand(BasePlayer sender, BasePlayer target)
         {
-            target.ToggleControllable(true);
+            target.ToggleControllable(false);
             target.SendClientMessage(Color.IndianRed, $"You have been freeze by admin {sender.Name}.");
 
             sender.SendClientMessage(Color.GreenYellow, $"You successfully freeze {target.Name}.");
+        }
+
+        [Command("unfreeze", Shortcut = "unfreeze")]
+        public static void OnUnFreezeCommand(BasePlayer sender, BasePlayer target)
+        {
+            target.ToggleControllable(true);
+            target.SendClientMessage(Color.GreenYellow, $"You have been un freeze by admin {sender.Name}.");
+
+            sender.SendClientMessage(Color.GreenYellow, $"You successfully un freeze {target.Name}.");
         }
     }
 }
