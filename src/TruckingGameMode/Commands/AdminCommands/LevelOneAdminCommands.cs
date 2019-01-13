@@ -147,5 +147,14 @@ namespace TruckingGameMode.Commands.AdminCommands
 
             sender.SendClientMessage(Color.GreenYellow, "You successfully give NOS to all used cars.");
         }
+
+        [Command("warn", Shortcut = "warn")]
+        public static void OnWarnCommand(BasePlayer sender, BasePlayer target, string reason)
+        {
+            if(string.IsNullOrEmpty(reason))
+                return;
+
+            target.GameText($"Warning: {reason}", 5000, 4);
+        }
     }
 }
