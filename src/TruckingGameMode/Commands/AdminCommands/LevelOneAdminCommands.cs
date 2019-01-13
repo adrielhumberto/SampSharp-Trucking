@@ -156,5 +156,18 @@ namespace TruckingGameMode.Commands.AdminCommands
 
             target.GameText($"Warning: {reason}", 5000, 4);
         }
+
+        [Command("skin", Shortcut = "skin")]
+        public static void OnSkinCommand(BasePlayer sender, int skin)
+        {
+            if (skin < 0 || skin == 74 || skin > 311)
+            {
+                sender.SendClientMessage(Color.IndianRed, "Invalid skin id.");
+                return;
+            }
+
+            sender.Skin = skin;
+            sender.SendClientMessage(Color.GreenYellow, $"You set yourself skin id: {skin}.");
+        }
     }
 }
