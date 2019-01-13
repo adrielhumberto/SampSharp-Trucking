@@ -112,5 +112,14 @@ namespace TruckingGameMode.Commands.AdminCommands
         {
             sender.SendClientMessage(Color.White, $"{Server.NetworkStats}");
         }
+
+        [Command("freeze", Shortcut = "freeze")]
+        public static void OnFreezeCommand(BasePlayer sender, BasePlayer target)
+        {
+            target.ToggleControllable(true);
+            target.SendClientMessage(Color.IndianRed, $"You have been freeze by admin {sender.Name}.");
+
+            sender.SendClientMessage(Color.GreenYellow, $"You successfully freeze {target.Name}.");
+        }
     }
 }
