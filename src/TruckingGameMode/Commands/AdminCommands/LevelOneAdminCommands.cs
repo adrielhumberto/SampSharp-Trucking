@@ -130,5 +130,22 @@ namespace TruckingGameMode.Commands.AdminCommands
 
             sender.SendClientMessage(Color.GreenYellow, $"You successfully un freeze {target.Name}.");
         }
+
+        [Command("nosall", Shortcut = "nosall")]
+        public static void OnNosAllCommand(BasePlayer sender)
+        {
+            foreach (var player in BasePlayer.All)
+            {
+                if (player.Vehicle is null)
+                {
+                    continue;
+                }
+
+                player.Vehicle.AddComponent(1010);
+                player.SendClientMessage(Color.GreenYellow, $"Admin {sender.Name} give NOS to all cars.");
+            }
+
+            sender.SendClientMessage(Color.GreenYellow, "You successfully give NOS to all used cars.");
+        }
     }
 }
