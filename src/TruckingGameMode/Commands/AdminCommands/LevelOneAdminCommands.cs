@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using SampSharp.GameMode;
 using SampSharp.GameMode.Definitions;
 using SampSharp.GameMode.SAMP;
@@ -15,7 +16,8 @@ namespace TruckingGameMode.Commands.AdminCommands
         public static async void OnKickCommand(BasePlayer sender, BasePlayer target, string reason)
         {
             sender.SendClientMessage(Color.GreenYellow, $"You kicked {target.Name}");
-            target.SendClientMessage(Color.IndianRed, $"You have been kicked from the server by {sender.Name}. Reason: {reason}");
+            target.SendClientMessage(Color.IndianRed,
+                $"You have been kicked from the server by {sender.Name}. Reason: {reason}");
 
             await Task.Delay(100);
             target.Kick();
@@ -38,16 +40,13 @@ namespace TruckingGameMode.Commands.AdminCommands
         [Command("clearchat", Shortcut = "cc")]
         public static void OnClearChatCommand(BasePlayer sender)
         {
-            for (var i = 0; i < 100; i++)
-            {
-                BasePlayer.SendClientMessageToAll(Color.White, "");
-            }
+            for (var i = 0; i < 100; i++) BasePlayer.SendClientMessageToAll(Color.White, "");
         }
 
         [Command("announce", Shortcut = "ann")]
         public static void OnAnnounceCommand(BasePlayer sender, string message)
         {
-            if(string.IsNullOrEmpty(message))
+            if (string.IsNullOrEmpty(message))
                 return;
 
             BasePlayer.GameTextForAll(message, 5000, 4);
@@ -136,10 +135,7 @@ namespace TruckingGameMode.Commands.AdminCommands
         {
             foreach (var player in BasePlayer.All)
             {
-                if (player.Vehicle is null)
-                {
-                    continue;
-                }
+                if (player.Vehicle is null) continue;
 
                 player.Vehicle.AddComponent(1010);
                 player.SendClientMessage(Color.GreenYellow, $"Admin {sender.Name} give NOS to all cars.");
@@ -151,7 +147,7 @@ namespace TruckingGameMode.Commands.AdminCommands
         [Command("warn", Shortcut = "warn")]
         public static void OnWarnCommand(BasePlayer sender, BasePlayer target, string reason)
         {
-            if(string.IsNullOrEmpty(reason))
+            if (string.IsNullOrEmpty(reason))
                 return;
 
             target.GameText($"Warning: {reason}", 5000, 4);
@@ -168,6 +164,21 @@ namespace TruckingGameMode.Commands.AdminCommands
 
             sender.Skin = skin;
             sender.SendClientMessage(Color.GreenYellow, $"You set yourself skin id: {skin}.");
+        }
+
+        [Command("respawnallcars", Shortcut = "respawnallcars")]
+        public static void OnResPawnAllCarsCommand(BasePlayer sender)
+        {
+            foreach (var car in BaseVehicle.All)
+                if (car.Model == VehicleModelType.ArticleTrailer || car.Model == VehicleModelType.ArticleTrailer2 ||
+                    car.Model == VehicleModelType.ArticleTrailer3 || car.Model == VehicleModelType.PetrolTrailer)
+                {
+                    if (BaseVehicle.All.All(vehicle => vehicle.Trailer != car)) car.Respawn();
+                }
+                else if (BasePlayer.All.All(player => player.Vehicle != car))
+                {
+                    car.Respawn();
+                }
         }
     }
 }

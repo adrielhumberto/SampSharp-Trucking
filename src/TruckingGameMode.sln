@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.28307.136
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TruckingGameMode", "TruckingGameMode\TruckingGameMode.csproj", "{FB8F0656-480D-4F65-BF36-C143D017B66D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GamemodeDatabase", "GamemodeDatabase\GamemodeDatabase.csproj", "{627EDEA1-AB48-4838-AC6C-1786A4B219E1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GamemodeDatabase", "GamemodeDatabase\GamemodeDatabase.csproj", "{627EDEA1-AB48-4838-AC6C-1786A4B219E1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
