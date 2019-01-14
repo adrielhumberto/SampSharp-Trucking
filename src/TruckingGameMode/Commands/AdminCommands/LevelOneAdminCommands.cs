@@ -277,5 +277,18 @@ namespace TruckingGameMode.Commands.AdminCommands
             sender.SendClientMessage(Color.GreenYellow, $"You successfully unmuted {target.Name}.");
             target.SendClientMessage(Color.GreenYellow, $"You have been unmuted by admin {sender.Name}.");
         }
+
+        [Command("setweather", Shortcut = "setweather")]
+        public static void OnSetWeatherCommand(BasePlayer sender, int weatherId)
+        {
+            if (weatherId < 0 || weatherId > 50)
+            {
+                sender.SendClientMessage(Color.IndianRed, "Wrong weather id. Must be between 0 and 50 .");
+                return;
+            }
+
+            Server.SetWeather(weatherId);
+            sender.SendClientMessage(Color.GreenYellow, $"You successfully changed the weather to weather id: {weatherId}.");
+        }
     }
 }
