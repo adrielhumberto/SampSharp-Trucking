@@ -258,5 +258,24 @@ namespace TruckingGameMode.Commands.AdminCommands
             target.SendClientMessage(Color.IndianRed, $"You got muted for {minutes} minutes by admin {sender.Name} Reason: {reason}.");
             sender.SendClientMessage(Color.GreenYellow, $"You successfully muted {target.Name} for {minutes} minutes.");
         }
+
+        [Command("unmute", Shortcut = "unmute")]
+        public static void OnUnMuteCommand(BasePlayer sender, Player target)
+        {
+            if (target.FetchPlayerAccountData().MuteTime < DateTime.Now)
+            {
+                sender.SendClientMessage(Color.IndianRed, $"{target.Name} is not currently muted.");
+                return;
+            }
+
+            using (var db = new GamemodeContext())
+            {
+                target.FetchPlayerAccountData(db).MuteTime = DateTime.Now;
+                db.SaveChanges();
+            }
+
+            sender.SendClientMessage(Color.GreenYellow, $"You successfully unmuted {target.Name}.");
+            target.SendClientMessage(Color.GreenYellow, $"You have been unmuted by admin {sender.Name}.");
+        }
     }
 }
