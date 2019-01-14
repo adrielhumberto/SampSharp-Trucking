@@ -99,11 +99,12 @@ namespace TruckingGameMode.Commands.AdminCommands
         }
 
         [Command("portloc", Shortcut = "portloc")]
-        public static void OnPortLocCommand(BasePlayer sender, float x, float y, float z)
+        public static async void OnPortLocCommand(BasePlayer sender, float x, float y, float z)
         {
             sender.Position = new Vector3(x, y, z);
+            await Task.Delay(100);
 
-            sender.SendClientMessage(Color.GreenYellow, $"You teleported to X: {x}, Y: {y}, Z: {z}");
+            sender.SendClientMessage(Color.GreenYellow, $"You teleported to {sender.Position.ToString()}");
         }
 
         [Command("networkstats", Shortcut = "networkstats")]
