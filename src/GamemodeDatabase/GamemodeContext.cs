@@ -6,6 +6,7 @@ namespace GamemodeDatabase
     public class GamemodeContext : DbContext
     {
         public DbSet<PlayerModel> Players { get; set; }
+        public DbSet<PlayerBanModel> Bans { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

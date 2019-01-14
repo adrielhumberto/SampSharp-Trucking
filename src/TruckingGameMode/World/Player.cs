@@ -49,6 +49,14 @@ namespace TruckingGameMode.World
             }
         }
 
+        public PlayerBanModel FetchBanDetails()
+        {
+            using (var db = new GamemodeContext())
+            {
+                return db.Bans.FirstOrDefault(x => x.Name == Name);
+            }
+        }
+
         public PlayerModel FetchPlayerAccountData(GamemodeContext db)
         {
             return db.Players.FirstOrDefault(x => x.Name == Name);
@@ -150,16 +158,32 @@ namespace TruckingGameMode.World
 
         #region Oveerrides of BasePlayer
 
-        public override void OnConnected(EventArgs e)
+        public override async void OnConnected(EventArgs e)
         {
             SetWorldBounds(2500.0f, 1850.0f, 631.2963f, -454.9898f);
 
             ToggleSpectating(true);
 
-            if (FetchPlayerAccountData() is null)
-                RegisterPlayer();
+            if (FetchBanDetails() is null)
+            {
+                if (FetchPlayerAccountData() is null)
+                    RegisterPlayer();
+                else
+                    LoginPlayer();
+            }
             else
-                LoginPlayer();
+            {
+                var message = $"Name: {FetchBanDetails().Name}\n" +
+                              $"Admin Name: {FetchBanDetails().AdminName}\n" +
+                              $"Reason: {FetchBanDetails().Reason}\n" +
+                              $"Issued at: {FetchBanDetails().IssuedTime:dd/MM/yyyy HH:mm}\n" +
+                              $"Banned until: {FetchBanDetails().BanTime:dd/MM/yyyy HH:mm}";
+
+                var infoDialog = new MessageDialog("Ban details", message, "OK");
+                infoDialog.Show(this);
+                await Task.Delay(100);
+                Kick();
+            }
 
 
             base.OnConnected(e);

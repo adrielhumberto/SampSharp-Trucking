@@ -1,5 +1,8 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
+using GamemodeDatabase;
+using GamemodeDatabase.Models;
 using SampSharp.GameMode;
 using SampSharp.GameMode.Definitions;
 using SampSharp.GameMode.SAMP;
@@ -184,6 +187,56 @@ namespace TruckingGameMode.Commands.AdminCommands
             }
 
             BasePlayer.SendClientMessageToAll(Color.GreenYellow, $"Admin {sender.Name} respawned all unused vehicles.");
+        }
+
+        [Command("ban", Shortcut = "ban")]
+        public static async void OnBanCommand(BasePlayer sender, BasePlayer target, string reason, int days = 0)
+        {
+            string message;
+            if (days == 0)
+            {
+                using (var db = new GamemodeContext())
+                {
+                    var ban = new PlayerBanModel
+                    {
+                        Name = target.Name,
+                        AdminName = sender.Name,
+                        Reason = reason,
+                        BanTime = DateTime.MaxValue,
+                        IssuedTime = DateTime.Now
+                    };
+                    await db.Bans.AddAsync(ban);
+                    await db.SaveChangesAsync();
+                }
+
+                message = $"Admin {sender.Name} banned you permanently from this server. Reason: {reason}.";
+            }
+            else
+            {
+                using (var db = new GamemodeContext())
+                {
+                    var ban = new PlayerBanModel
+                    {
+                        Name = target.Name,
+                        AdminName = sender.Name,
+                        Reason = reason,
+                        BanTime = DateTime.Now.AddDays(days),
+                        IssuedTime = DateTime.Now
+                    };
+                    await db.Bans.AddAsync(ban);
+                    await db.SaveChangesAsync();
+                }
+
+                message = $"Admin {sender.Name} banned you for {days} days from this server. Reason: {reason}.";
+            }
+
+            target.SendClientMessage(Color.IndianRed, message);
+
+            BasePlayer.SendClientMessageToAll(Color.Blue, $"{target.Name} has been banned from the server.");
+            sender.SendClientMessage(Color.GreenYellow, $"You successfully banned {target.Name} from this server.");
+
+            await Task.Delay(100);
+            target.Kick();
         }
     }
 }
