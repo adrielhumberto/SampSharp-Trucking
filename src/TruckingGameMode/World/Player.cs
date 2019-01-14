@@ -384,7 +384,7 @@ namespace TruckingGameMode.World
         public override void OnEnterVehicle(EnterVehicleEventArgs e)
         {
             if (e.Vehicle.Engine == false)
-                SendClientMessage(Color.BlueViolet, "Press 2 key to start vehicle engine.");
+                SendClientMessage(Color.CadetBlue, "Press key 2 to start your vehicle engine.");
 
             base.OnEnterVehicle(e);
         }
