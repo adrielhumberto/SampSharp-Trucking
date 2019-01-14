@@ -333,6 +333,15 @@ namespace TruckingGameMode.World
         {
             e.SendToPlayers = false;
 
+            if (FetchPlayerAccountData().MuteTime > DateTime.Now)
+            {
+                SendClientMessage(Color.IndianRed,
+                    DateTime.Now.Subtract(FetchPlayerAccountData().MuteTime).Minutes != 0
+                        ? $"You are currently muted for {FetchPlayerAccountData().MuteTime.Subtract(DateTime.Now).Minutes} more minutes."
+                        : $"You are currently muted for {FetchPlayerAccountData().MuteTime.Subtract(DateTime.Now).Seconds} more seconds.");
+                return;
+            }
+
             if (FetchPlayerAccountData().AdminLevel > 0)
                 if (e.Text.StartsWith('@'))
                 {

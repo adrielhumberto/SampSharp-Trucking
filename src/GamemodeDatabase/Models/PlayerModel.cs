@@ -20,5 +20,6 @@ namespace GamemodeDatabase.Models
 
         public DateTime LastActive { get; set; }
         public DateTime JoinedDate { get; set; }
+        public DateTime MuteTime { get; set; }
     }
 }

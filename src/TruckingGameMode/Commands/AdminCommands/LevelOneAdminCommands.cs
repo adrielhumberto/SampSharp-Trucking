@@ -9,6 +9,7 @@ using SampSharp.GameMode.SAMP;
 using SampSharp.GameMode.SAMP.Commands;
 using SampSharp.GameMode.World;
 using TruckingGameMode.Commands.AdminCommands.AdminCommandPermissions;
+using TruckingGameMode.World;
 
 namespace TruckingGameMode.Commands.AdminCommands
 {
@@ -237,6 +238,25 @@ namespace TruckingGameMode.Commands.AdminCommands
 
             await Task.Delay(100);
             target.Kick();
+        }
+
+        [Command("mute", Shortcut = "mute")]
+        public static void OnMuteCommand(BasePlayer sender, Player target, string reason, int minutes = 10)
+        {
+            if (minutes < 0 || minutes > 60)
+            {
+                sender.SendClientMessage(Color.IndianRed, "Minutes can't be less than 0 or more than 60.");
+                return;
+            }
+
+            using (var db = new GamemodeContext())
+            {
+                target.FetchPlayerAccountData(db).MuteTime = DateTime.Now.AddMinutes(minutes);
+                db.SaveChanges();
+            }
+
+            target.SendClientMessage(Color.IndianRed, $"You got muted for {minutes} minutes by admin {sender.Name} Reason: {reason}.");
+            sender.SendClientMessage(Color.GreenYellow, $"You successfully muted {target.Name} for {minutes} minutes.");
         }
     }
 }
