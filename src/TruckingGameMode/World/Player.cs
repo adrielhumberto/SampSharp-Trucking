@@ -23,7 +23,7 @@ namespace TruckingGameMode.World
     {
         public bool IsLogged;
         public PlayerClasses PlayerClass { get; set; }
-        public int LoginTries { get; private set; }
+        private int LoginTries { get; set; }
         public TruckerJobDetails CurrentJob { get; set; }
 
         public override int Money
@@ -133,7 +133,8 @@ namespace TruckingGameMode.World
                         var player = new PlayerModel
                         {
                             Password = hash,
-                            Name = Name
+                            Name = Name,
+                            JoinedDate = DateTime.Now
                         };
                         db.Players.Add(player);
                         db.SaveChanges();
@@ -311,6 +312,13 @@ namespace TruckingGameMode.World
         public override void OnDisconnected(DisconnectEventArgs e)
         {
             SavePlayerPosition();
+
+            using (var db = new GamemodeContext())
+            {
+                FetchPlayerAccountData(db).LastActive = DateTime.Now;
+                db.SaveChanges();
+            }
+
             if (CurrentJob != null)
             {
                 CurrentJob.Truck.Dispose();

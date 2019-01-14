@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace GamemodeDatabase.Models
 {
@@ -16,5 +17,8 @@ namespace GamemodeDatabase.Models
 
         public byte AdminLevel { get; set; }
         public int Money { get; set; }
+
+        public DateTime LastActive { get; set; }
+        public DateTime JoinedDate { get; set; }
     }
 }
