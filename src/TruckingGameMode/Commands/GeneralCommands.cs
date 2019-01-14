@@ -57,6 +57,9 @@ namespace TruckingGameMode.Commands
             var dialog = new ListDialog("Chose a radio station", "Chose", "Close");
             dialog.AddItem("Pro FM");
             dialog.AddItem("Radio Bandit");
+            dialog.AddItem("TruckersFM");
+            dialog.AddItem("SimulatorRadio");
+            dialog.AddItem("TruckSim FM");
             dialog.AddItem("Stop radio");
             dialog.Show(sender);
 
@@ -72,6 +75,15 @@ namespace TruckingGameMode.Commands
                         break;
                     case 1:
                         sender.PlayAudioStream("http://live.radiobandit.ro:8000/bandit.mp3");
+                        break;
+                    case 2:
+                        sender.PlayAudioStream("https://radio.truckers.fm");
+                        break;
+                    case 3:
+                        sender.PlayAudioStream("https://simulatorradio.stream/stream?1547465711053");
+                        break;
+                    case 4:
+                        sender.PlayAudioStream("https://trucksim.fm/stream/audio.mp3");
                         break;
                     default:
                         sender.StopAudioStream();
