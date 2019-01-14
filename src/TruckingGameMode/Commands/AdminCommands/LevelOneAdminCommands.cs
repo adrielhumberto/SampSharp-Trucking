@@ -17,16 +17,16 @@ namespace TruckingGameMode.Commands.AdminCommands
     public class LevelOneAdminCommands
     {
         [Command("kick", Shortcut = "kick")]
-        public static async void OnKickCommand(BasePlayer sender, BasePlayer target, string reason)
+        public static async void OnKickCommand(BasePlayer sender, BasePlayer playerId, string reason)
         {
-            sender.SendClientMessage(Color.GreenYellow, $"You kicked {target.Name}");
-            target.SendClientMessage(Color.IndianRed,
+            sender.SendClientMessage(Color.GreenYellow, $"You kicked {playerId.Name}");
+            playerId.SendClientMessage(Color.IndianRed,
                 $"You have been kicked from the server by {sender.Name}. Reason: {reason}");
 
             await Task.Delay(100);
-            target.Kick();
+            playerId.Kick();
 
-            BasePlayer.SendClientMessageToAll(Color.IndianRed, $"{target.Name} has been kicked from the server.");
+            BasePlayer.SendClientMessageToAll(Color.IndianRed, $"{playerId.Name} has been kicked from the server.");
         }
 
         [Command("repair", Shortcut = "repair")]
@@ -57,21 +57,21 @@ namespace TruckingGameMode.Commands.AdminCommands
         }
 
         [Command("port", Shortcut = "port")]
-        public static void OnPortCommand(BasePlayer sender, BasePlayer target)
+        public static void OnPortCommand(BasePlayer sender, BasePlayer playerId)
         {
-            sender.Position = target.Position;
+            sender.Position = playerId.Position;
 
-            sender.SendClientMessage(Color.GreenYellow, $"You teleported to {target.Name}.");
-            target.SendClientMessage(Color.GreenYellow, $"Admin {sender.Name} teleported to you.");
+            sender.SendClientMessage(Color.GreenYellow, $"You teleported to {playerId.Name}.");
+            playerId.SendClientMessage(Color.GreenYellow, $"Admin {sender.Name} teleported to you.");
         }
 
         [Command("get", Shortcut = "get")]
-        public static void OnGetCommand(BasePlayer sender, BasePlayer target)
+        public static void OnGetCommand(BasePlayer sender, BasePlayer playerId)
         {
-            target.Position = sender.Position;
+            playerId.Position = sender.Position;
 
-            target.SendClientMessage(Color.GreenYellow, $"You have been teleported to admin {sender.Name}.");
-            sender.SendClientMessage(Color.GreenYellow, $"You teleported {target.Name} to you.");
+            playerId.SendClientMessage(Color.GreenYellow, $"You have been teleported to admin {sender.Name}.");
+            sender.SendClientMessage(Color.GreenYellow, $"You teleported {playerId.Name} to you.");
         }
 
         [Command("jetpack", Shortcut = "jetpack")]
@@ -94,12 +94,12 @@ namespace TruckingGameMode.Commands.AdminCommands
         }
 
         [Command("tele", Shortcut = "tele")]
-        public static void OnTeleCommand(BasePlayer sender, BasePlayer target1, BasePlayer target2)
+        public static void OnTeleCommand(BasePlayer sender, BasePlayer playerId1, BasePlayer playerId2)
         {
-            target1.Position = target2.Position;
+            playerId1.Position = playerId2.Position;
 
-            target1.SendClientMessage(Color.GreenYellow, $"You have been teleported to {target2.Name}.");
-            target2.SendClientMessage(Color.GreenYellow, $"{target1.Name} have been teleported to you.");
+            playerId1.SendClientMessage(Color.GreenYellow, $"You have been teleported to {playerId2.Name}.");
+            playerId2.SendClientMessage(Color.GreenYellow, $"{playerId1.Name} have been teleported to you.");
         }
 
         [Command("portloc", Shortcut = "portloc")]
@@ -118,21 +118,21 @@ namespace TruckingGameMode.Commands.AdminCommands
         }
 
         [Command("freeze", Shortcut = "freeze")]
-        public static void OnFreezeCommand(BasePlayer sender, BasePlayer target)
+        public static void OnFreezeCommand(BasePlayer sender, BasePlayer playerId)
         {
-            target.ToggleControllable(false);
-            target.SendClientMessage(Color.IndianRed, $"You have been freeze by admin {sender.Name}.");
+            playerId.ToggleControllable(false);
+            playerId.SendClientMessage(Color.IndianRed, $"You have been freeze by admin {sender.Name}.");
 
-            sender.SendClientMessage(Color.GreenYellow, $"You successfully freeze {target.Name}.");
+            sender.SendClientMessage(Color.GreenYellow, $"You successfully freeze {playerId.Name}.");
         }
 
         [Command("unfreeze", Shortcut = "unfreeze")]
-        public static void OnUnFreezeCommand(BasePlayer sender, BasePlayer target)
+        public static void OnUnFreezeCommand(BasePlayer sender, BasePlayer playerId)
         {
-            target.ToggleControllable(true);
-            target.SendClientMessage(Color.GreenYellow, $"You have been un freeze by admin {sender.Name}.");
+            playerId.ToggleControllable(true);
+            playerId.SendClientMessage(Color.GreenYellow, $"You have been un freeze by admin {sender.Name}.");
 
-            sender.SendClientMessage(Color.GreenYellow, $"You successfully un freeze {target.Name}.");
+            sender.SendClientMessage(Color.GreenYellow, $"You successfully un freeze {playerId.Name}.");
         }
 
         [Command("nosall", Shortcut = "nosall")]
@@ -150,12 +150,12 @@ namespace TruckingGameMode.Commands.AdminCommands
         }
 
         [Command("warn", Shortcut = "warn")]
-        public static void OnWarnCommand(BasePlayer sender, BasePlayer target, string reason)
+        public static void OnWarnCommand(BasePlayer sender, BasePlayer playerId, string reason)
         {
             if (string.IsNullOrEmpty(reason))
                 return;
 
-            target.GameText($"Warning: {reason}", 5000, 4);
+            playerId.GameText($"Warning: {reason}", 5000, 4);
         }
 
         [Command("skin", Shortcut = "skin")]
@@ -191,7 +191,7 @@ namespace TruckingGameMode.Commands.AdminCommands
         }
 
         [Command("ban", Shortcut = "ban")]
-        public static async void OnBanCommand(BasePlayer sender, BasePlayer target, string reason, int days = 0)
+        public static async void OnBanCommand(BasePlayer sender, BasePlayer playerId, string reason, int days = 0)
         {
             string message;
             if (days == 0)
@@ -200,7 +200,7 @@ namespace TruckingGameMode.Commands.AdminCommands
                 {
                     var ban = new PlayerBanModel
                     {
-                        Name = target.Name,
+                        Name = playerId.Name,
                         AdminName = sender.Name,
                         Reason = reason,
                         BanTime = DateTime.MaxValue,
@@ -218,7 +218,7 @@ namespace TruckingGameMode.Commands.AdminCommands
                 {
                     var ban = new PlayerBanModel
                     {
-                        Name = target.Name,
+                        Name = playerId.Name,
                         AdminName = sender.Name,
                         Reason = reason,
                         BanTime = DateTime.Now.AddDays(days),
@@ -231,17 +231,17 @@ namespace TruckingGameMode.Commands.AdminCommands
                 message = $"Admin {sender.Name} banned you for {days} days from this server. Reason: {reason}.";
             }
 
-            target.SendClientMessage(Color.IndianRed, message);
+            playerId.SendClientMessage(Color.IndianRed, message);
 
-            BasePlayer.SendClientMessageToAll(Color.Blue, $"{target.Name} has been banned from the server.");
-            sender.SendClientMessage(Color.GreenYellow, $"You successfully banned {target.Name} from this server.");
+            BasePlayer.SendClientMessageToAll(Color.Blue, $"{playerId.Name} has been banned from the server.");
+            sender.SendClientMessage(Color.GreenYellow, $"You successfully banned {playerId.Name} from this server.");
 
             await Task.Delay(100);
-            target.Kick();
+            playerId.Kick();
         }
 
         [Command("mute", Shortcut = "mute")]
-        public static void OnMuteCommand(BasePlayer sender, Player target, string reason, int minutes = 10)
+        public static void OnMuteCommand(BasePlayer sender, Player playerId, string reason, int minutes = 10)
         {
             if (minutes < 0 || minutes > 60)
             {
@@ -251,31 +251,31 @@ namespace TruckingGameMode.Commands.AdminCommands
 
             using (var db = new GamemodeContext())
             {
-                target.FetchPlayerAccountData(db).MuteTime = DateTime.Now.AddMinutes(minutes);
+                playerId.FetchPlayerAccountData(db).MuteTime = DateTime.Now.AddMinutes(minutes);
                 db.SaveChanges();
             }
 
-            target.SendClientMessage(Color.IndianRed, $"You got muted for {minutes} minutes by admin {sender.Name} Reason: {reason}.");
-            sender.SendClientMessage(Color.GreenYellow, $"You successfully muted {target.Name} for {minutes} minutes.");
+            playerId.SendClientMessage(Color.IndianRed, $"You got muted for {minutes} minutes by admin {sender.Name} Reason: {reason}.");
+            sender.SendClientMessage(Color.GreenYellow, $"You successfully muted {playerId.Name} for {minutes} minutes.");
         }
 
         [Command("unmute", Shortcut = "unmute")]
-        public static void OnUnMuteCommand(BasePlayer sender, Player target)
+        public static void OnUnMuteCommand(BasePlayer sender, Player playerId)
         {
-            if (target.FetchPlayerAccountData().MuteTime < DateTime.Now)
+            if (playerId.FetchPlayerAccountData().MuteTime < DateTime.Now)
             {
-                sender.SendClientMessage(Color.IndianRed, $"{target.Name} is not currently muted.");
+                sender.SendClientMessage(Color.IndianRed, $"{playerId.Name} is not currently muted.");
                 return;
             }
 
             using (var db = new GamemodeContext())
             {
-                target.FetchPlayerAccountData(db).MuteTime = DateTime.Now;
+                playerId.FetchPlayerAccountData(db).MuteTime = DateTime.Now;
                 db.SaveChanges();
             }
 
-            sender.SendClientMessage(Color.GreenYellow, $"You successfully unmuted {target.Name}.");
-            target.SendClientMessage(Color.GreenYellow, $"You have been unmuted by admin {sender.Name}.");
+            sender.SendClientMessage(Color.GreenYellow, $"You successfully unmuted {playerId.Name}.");
+            playerId.SendClientMessage(Color.GreenYellow, $"You have been unmuted by admin {sender.Name}.");
         }
 
         [Command("setweather", Shortcut = "setweather")]

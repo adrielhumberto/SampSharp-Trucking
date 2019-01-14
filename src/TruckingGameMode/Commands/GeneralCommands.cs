@@ -13,15 +13,15 @@ namespace TruckingGameMode.Commands
     public class GeneralCommands
     {
         [Command("pm")]
-        public static void OnPmCommand(BasePlayer sender, BasePlayer receiver, string message)
+        public static void OnPmCommand(BasePlayer sender, BasePlayer playerId, string message)
         {
-            if (sender.Id == receiver.Id)
+            if (sender.Id == playerId.Id)
             {
                 sender.SendClientMessage(Color.IndianRed, "You can't pm yourself!");
                 return;
             }
 
-            receiver.SendClientMessage(Color.White,
+            playerId.SendClientMessage(Color.White,
                 $"{Color.Gray}PM from {sender.Name}({sender.Id}): {Color.White}{message}");
         }
 
@@ -144,18 +144,18 @@ namespace TruckingGameMode.Commands
         }
 
         [Command("eject")]
-        public static void OnEjectCommand(BasePlayer sender, BasePlayer target)
+        public static void OnEjectCommand(BasePlayer sender, BasePlayer playerId)
         {
             if (sender.Vehicle != null || sender.Vehicle?.Driver == sender)
             {
-                if (sender.Vehicle.Passengers.Any(x => x.Name == target.Name))
+                if (sender.Vehicle.Passengers.Any(x => x.Name == playerId.Name))
                 {
-                    target.Position = target.Position + Vector3.Up;
-                    target.SendClientMessage(Color.IndianRed, "You have been eject from the car.");
+                    playerId.Position = playerId.Position + Vector3.Up;
+                    playerId.SendClientMessage(Color.IndianRed, "You have been eject from the car.");
                 }
                 else
                 {
-                    sender.SendClientMessage(Color.IndianRed, $"{target.Name} is not in your car or you can't eject yourself.");
+                    sender.SendClientMessage(Color.IndianRed, $"{playerId.Name} is not in your car or you can't eject yourself.");
                 }
             }
             else
