@@ -164,6 +164,19 @@ namespace TruckingGameMode.World
 
             ToggleSpectating(true);
 
+            if (FetchBanDetails() != null)
+            {
+                if (FetchBanDetails().BanTime <= DateTime.Now)
+                {
+                    using (var db = new GamemodeContext())
+                    {
+                        db.Bans.Remove(FetchBanDetails());
+                        db.SaveChanges();
+                    }
+                }
+            }
+
+
             if (FetchBanDetails() is null)
             {
                 if (FetchPlayerAccountData() is null)
