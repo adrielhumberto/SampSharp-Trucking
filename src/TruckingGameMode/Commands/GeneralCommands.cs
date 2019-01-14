@@ -1,4 +1,6 @@
-﻿using SampSharp.GameMode.Definitions;
+﻿using System.Linq;
+using SampSharp.GameMode;
+using SampSharp.GameMode.Definitions;
 using SampSharp.GameMode.Display;
 using SampSharp.GameMode.SAMP;
 using SampSharp.GameMode.SAMP.Commands;
@@ -139,6 +141,27 @@ namespace TruckingGameMode.Commands
                     listDialog.AddItem(adminData.Name);
             }
             listDialog.Show(sender);
+        }
+
+        [Command("eject")]
+        public static void OnEjectCommand(BasePlayer sender, BasePlayer target)
+        {
+            if (sender.Vehicle != null || sender.Vehicle?.Driver == sender)
+            {
+                if (sender.Vehicle.Passengers.Any(x => x.Name == target.Name))
+                {
+                    target.Position = target.Position + Vector3.Up;
+                    target.SendClientMessage(Color.IndianRed, "You have been eject from the car.");
+                }
+                else
+                {
+                    sender.SendClientMessage(Color.IndianRed, $"{target.Name} is not in your car or you can't eject yourself.");
+                }
+            }
+            else
+            {
+                sender.SendClientMessage(Color.IndianRed, "You are not in any car or you are not the driver.");
+            }
         }
     }
 }
