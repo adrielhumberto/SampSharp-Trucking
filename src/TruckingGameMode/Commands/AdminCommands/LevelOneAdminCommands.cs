@@ -170,6 +170,7 @@ namespace TruckingGameMode.Commands.AdminCommands
         public static void OnResPawnAllCarsCommand(BasePlayer sender)
         {
             foreach (var car in BaseVehicle.All)
+            {
                 if (car.Model == VehicleModelType.ArticleTrailer || car.Model == VehicleModelType.ArticleTrailer2 ||
                     car.Model == VehicleModelType.ArticleTrailer3 || car.Model == VehicleModelType.PetrolTrailer)
                 {
@@ -179,6 +180,9 @@ namespace TruckingGameMode.Commands.AdminCommands
                 {
                     car.Respawn();
                 }
+            }
+
+            BasePlayer.SendClientMessageToAll(Color.GreenYellow, $"Admin {sender.Name} respawned all unused vehicles.");
         }
     }
 }
