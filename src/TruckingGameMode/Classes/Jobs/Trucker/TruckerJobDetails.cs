@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using SampSharp.GameMode.World;
 using TruckingGameMode.Classes.Jobs.Trucker.Definitions;
+using TruckingGameMode.World;
 
 namespace TruckingGameMode.Classes.Jobs.Trucker
 {
@@ -24,8 +25,8 @@ namespace TruckingGameMode.Classes.Jobs.Trucker
         public int MoneyAwarded { get; set; }
         public int CargoWeight { get; set; }
 
-        public BaseVehicle Truck { get; set; }
-        public BaseVehicle Trailer { get; set; }
+        public Vehicle Truck { get; set; }
+        public Vehicle Trailer { get; set; }
 
         public TruckerJobType JobType { get; set; }
 

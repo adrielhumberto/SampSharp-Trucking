@@ -24,6 +24,7 @@ namespace TruckingGameMode
             base.LoadControllers(controllers);
 
             controllers.Override(new PlayerController());
+            controllers.Override(new VehicleController());
         }
 
         protected override async void OnInitialized(EventArgs e)

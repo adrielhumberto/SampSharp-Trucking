@@ -107,10 +107,10 @@ namespace TruckingGameMode.Classes.Jobs.Trucker
 
                     player.CurrentJob.JobType = TruckerJobType.QuickJob;
 
-                    player.CurrentJob.Truck = BaseVehicle.Create(VehicleModelType.Roadtrain,
+                    player.CurrentJob.Truck = Vehicle.Create(VehicleModelType.Roadtrain,
                         jobLocation.SpawnPosition, jobLocation.SpawnRotation, 2, 3);
 
-                    player.CurrentJob.Trailer = BaseVehicle.Create(VehicleModelType.ArticleTrailer,
+                    player.CurrentJob.Trailer = Vehicle.Create(VehicleModelType.ArticleTrailer,
                         jobLocation.SpawnPosition, jobLocation.SpawnRotation, 2, 3);
 
                     player.PutInVehicle(player.CurrentJob.Truck);
@@ -143,9 +143,9 @@ namespace TruckingGameMode.Classes.Jobs.Trucker
 
                     player.CurrentJob.JobType = TruckerJobType.FreightMarket;
 
-                    player.CurrentJob.Truck = player.Vehicle;
+                    player.CurrentJob.Truck = (Vehicle)player.Vehicle;
 
-                    player.CurrentJob.Trailer = BaseVehicle.Create(VehicleModelType.ArticleTrailer,
+                    player.CurrentJob.Trailer = Vehicle.Create(VehicleModelType.ArticleTrailer,
                         jobLocation.SpawnPosition, jobLocation.SpawnRotation, 2, 3);
 
                     player.CurrentJob.Truck.Trailer = player.CurrentJob.Trailer;
@@ -188,8 +188,8 @@ namespace TruckingGameMode.Classes.Jobs.Trucker
 
                             player.CurrentJob.JobType = TruckerJobType.CargoMarket;
 
-                            player.CurrentJob.Truck = player.Vehicle;
-                            player.CurrentJob.Trailer = player.Vehicle.Trailer;
+                            player.CurrentJob.Truck = (Vehicle)player.Vehicle;
+                            player.CurrentJob.Trailer = (Vehicle)player.Vehicle.Trailer;
 
                             player.CurrentJob.Truck.Engine = true;
                         }
