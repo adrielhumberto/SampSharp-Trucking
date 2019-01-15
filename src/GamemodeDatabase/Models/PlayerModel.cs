@@ -17,6 +17,7 @@ namespace GamemodeDatabase.Models
 
         public byte AdminLevel { get; set; }
         public int Money { get; set; }
+        public int TruckerJobs { get; set; }
 
         public DateTime LastActive { get; set; }
         public DateTime JoinedDate { get; set; }

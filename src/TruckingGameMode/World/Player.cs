@@ -41,6 +41,19 @@ namespace TruckingGameMode.World
             }
         }
 
+        public int TruckerJobs
+        {
+            get => FetchPlayerAccountData().TruckerJobs;
+            set
+            {
+                using (var db = new GamemodeContext())
+                {
+                    FetchPlayerAccountData(db).TruckerJobs += value;
+                    db.SaveChanges();
+                }
+            }
+        }
+
         public PlayerModel FetchPlayerAccountData()
         {
             using (var db = new GamemodeContext())

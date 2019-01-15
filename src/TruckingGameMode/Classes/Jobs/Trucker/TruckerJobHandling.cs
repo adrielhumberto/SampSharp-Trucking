@@ -3,7 +3,6 @@ using SampSharp.GameMode.Definitions;
 using SampSharp.GameMode.Display;
 using SampSharp.GameMode.Events;
 using SampSharp.GameMode.SAMP;
-using SampSharp.GameMode.World;
 using SampSharp.Streamer.World;
 using TruckingGameMode.Classes.Jobs.Trucker.Definitions;
 using TruckingGameMode.World;
@@ -49,6 +48,8 @@ namespace TruckingGameMode.Classes.Jobs.Trucker
             var moneyEarned = player.CurrentJob.MoneyAwarded *
                               (player.CurrentJob.StartLocation.Position.DistanceTo(location.Position) / 100) +
                               player.CurrentJob.CargoWeight * 1.25;
+
+            player.TruckerJobs += 1;
 
             player.Money += (int) Math.Round(moneyEarned);
             player.SendClientMessage(Color.GreenYellow, $"You earned ${(int) Math.Round(moneyEarned)}");
@@ -143,7 +144,7 @@ namespace TruckingGameMode.Classes.Jobs.Trucker
 
                     player.CurrentJob.JobType = TruckerJobType.FreightMarket;
 
-                    player.CurrentJob.Truck = (Vehicle)player.Vehicle;
+                    player.CurrentJob.Truck = (Vehicle) player.Vehicle;
 
                     player.CurrentJob.Trailer = Vehicle.Create(VehicleModelType.ArticleTrailer,
                         jobLocation.SpawnPosition, jobLocation.SpawnRotation, 2, 3);
@@ -188,8 +189,8 @@ namespace TruckingGameMode.Classes.Jobs.Trucker
 
                             player.CurrentJob.JobType = TruckerJobType.CargoMarket;
 
-                            player.CurrentJob.Truck = (Vehicle)player.Vehicle;
-                            player.CurrentJob.Trailer = (Vehicle)player.Vehicle.Trailer;
+                            player.CurrentJob.Truck = (Vehicle) player.Vehicle;
+                            player.CurrentJob.Trailer = (Vehicle) player.Vehicle.Trailer;
 
                             player.CurrentJob.Truck.Engine = true;
                         }
@@ -232,8 +233,6 @@ namespace TruckingGameMode.Classes.Jobs.Trucker
                     break;
                 case 2:
                     ShowJobListToPlayer(player, jobLocation, TruckerJobType.CargoMarket);
-                    break;
-                default:
                     break;
             }
         }
