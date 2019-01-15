@@ -163,5 +163,27 @@ namespace TruckingGameMode.Commands
                 sender.SendClientMessage(Color.IndianRed, "You are not in any car or you are not the driver.");
             }
         }
+
+        [Command("givemoney")]
+        public static void OnGiveMoneyCommand(Player sender, Player playerId, int money)
+        {
+            if (money <= 0)
+            {
+                sender.SendClientMessage(Color.IndianRed, "Money given can't be 0 or negative number.");
+                return;
+            }
+
+            if (sender.Money < money)
+            {
+                sender.SendClientMessage(Color.IndianRed, "You don't have enough money.");
+                return;
+            }
+
+            playerId.Money += money;
+            sender.Money -= money;
+
+            playerId.SendClientMessage(Color.GreenYellow, $"You received ${money} from {sender.Name}.");
+            sender.SendClientMessage(Color.GreenYellow, $"You successfully given ${money} to {playerId.Name}.");
+        }
     }
 }
