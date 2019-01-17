@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using BCrypt;
 using GamemodeDatabase;
 using GamemodeDatabase.Models;
+using Microsoft.EntityFrameworkCore;
 using SampSharp.GameMode;
 using SampSharp.GameMode.Definitions;
 using SampSharp.GameMode.Display;
@@ -57,7 +58,7 @@ namespace TruckingGameMode.World
         {
             using (var db = new GamemodeContext())
             {
-                return db.Players.FirstOrDefault(x => x.Name == Name);
+                return db.Players.AsNoTracking().FirstOrDefault(x => x.Name == Name);
             }
         }
 
