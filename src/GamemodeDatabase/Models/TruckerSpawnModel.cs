@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace GamemodeDatabase.Models
 {
@@ -13,13 +14,13 @@ namespace GamemodeDatabase.Models
         public float Z { get; set; }
         public float Angle { get; set; }
 
-        public static List<TruckerSpawnModel> GetTruckerSpawnList
+        public static List<TruckerSpawnModel> GetTruckerSpawnListNoTracking
         {
             get
             {
                 using (var db = new GamemodeContext())
                 {
-                    return db.TruckerSpawns.ToList();
+                    return db.TruckerSpawns.AsNoTracking().ToList();
                 }
             }
         }
