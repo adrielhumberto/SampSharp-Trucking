@@ -1,6 +1,4 @@
 ﻿using System;
-using GamemodeDatabase;
-using Microsoft.EntityFrameworkCore;
 using SampSharp.GameMode;
 using SampSharp.GameMode.Controllers;
 using SampSharp.GameMode.Definitions;
@@ -27,7 +25,7 @@ namespace TruckingGameMode
             controllers.Override(new VehicleController());
         }
 
-        protected override async void OnInitialized(EventArgs e)
+        protected override void OnInitialized(EventArgs e)
         {
             #region GameMode settings
 
@@ -84,18 +82,6 @@ namespace TruckingGameMode
 
             #endregion
 
-            try
-            {
-                using (var db = new GamemodeContext())
-                {
-                    await db.Database.MigrateAsync();
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                throw;
-            }
 
             base.OnInitialized(e);
         }
