@@ -11,6 +11,7 @@ using SampSharp.GameMode.Display;
 using SampSharp.GameMode.Events;
 using SampSharp.GameMode.Pools;
 using SampSharp.GameMode.SAMP;
+using SampSharp.GameMode.Tools;
 using SampSharp.GameMode.World;
 using TruckingGameMode.Classes;
 using TruckingGameMode.Classes.Jobs.Trucker;
@@ -215,7 +216,8 @@ namespace TruckingGameMode.World
         {
             base.OnKeyStateChanged(e);
 
-            if (e.NewKeys == Keys.LookBehind && e.OldKeys != Keys.LookBehind) GeneralCommands.OnEngineCommand(this);
+            if(KeyUtils.HasPressed(e.NewKeys, e.OldKeys, Keys.LookBehind))
+                GeneralCommands.OnEngineCommand(this);
         }
 
         public override async void OnRequestClass(RequestClassEventArgs e)
