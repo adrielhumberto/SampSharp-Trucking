@@ -194,5 +194,25 @@ namespace TruckingGameMode.Commands
             playerId.SendClientMessage(Color.GreenYellow, $"You received ${money} from {sender.Name}.");
             sender.SendClientMessage(Color.GreenYellow, $"You successfully given ${money} to {playerId.Name}.");
         }
+
+        [Command("detach")]
+        public static void OnDetachCommand(BasePlayer sender)
+        {
+            if (sender.Vehicle == null)
+            {
+                sender.SendClientMessage(Color.IndianRed, "You are not driving any vehicle.");
+                return;
+            }
+
+            if (sender.Vehicle.HasTrailer)
+            {
+                sender.Vehicle.Trailer = null;
+                sender.SendClientMessage(Color.GreenYellow, "Trailer detached successfully.");
+            }
+            else
+            {
+                sender.SendClientMessage(Color.IndianRed, "Your vehicle doesn't have any trailer.");
+            }
+        }
     }
 }
