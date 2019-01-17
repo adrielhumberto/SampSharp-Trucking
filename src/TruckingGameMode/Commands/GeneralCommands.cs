@@ -1,11 +1,11 @@
 ﻿using System.Linq;
+using GamemodeDatabase.Models;
 using SampSharp.GameMode;
 using SampSharp.GameMode.Definitions;
 using SampSharp.GameMode.Display;
 using SampSharp.GameMode.SAMP;
 using SampSharp.GameMode.SAMP.Commands;
 using SampSharp.GameMode.World;
-using TruckingGameMode.Classes.Spawns;
 using TruckingGameMode.World;
 
 namespace TruckingGameMode.Commands
@@ -105,16 +105,22 @@ namespace TruckingGameMode.Commands
         public static void OnRescueCommand(BasePlayer sender)
         {
             var dialogSpawnsList = new TablistDialog("Select spawn", 1, "Select", "Cancel");
-            foreach (var spawn in TruckerSpawn.TruckerSpawns) dialogSpawnsList.Add(spawn.Name);
+            foreach (var spawn in TruckerSpawnModel.GetTruckerSpawnList)
+                dialogSpawnsList.Add(spawn.Name);
             dialogSpawnsList.Show(sender);
             dialogSpawnsList.Response += (obj, eve) =>
             {
+                if(eve.DialogButton == DialogButton.Right)
+                    return;
+
                 switch (eve.ListItem)
                 {
                     default:
                     {
-                        sender.Position = TruckerSpawn.TruckerSpawns[eve.ListItem].Position;
-                        sender.Angle = TruckerSpawn.TruckerSpawns[eve.ListItem].Angle;
+                        sender.Position = new Vector3(TruckerSpawnModel.GetTruckerSpawnList[eve.ListItem].X,
+                            TruckerSpawnModel.GetTruckerSpawnList[eve.ListItem].Y,
+                            TruckerSpawnModel.GetTruckerSpawnList[eve.ListItem].Z);
+                        sender.Angle = TruckerSpawnModel.GetTruckerSpawnList[eve.ListItem].Angle;
                     }
                         break;
                 }
@@ -137,9 +143,10 @@ namespace TruckingGameMode.Commands
             foreach (var admin in BasePlayer.All)
             {
                 var adminData = admin as Player;
-                if(adminData?.FetchPlayerAccountData().AdminLevel > 0)
+                if (adminData?.FetchPlayerAccountData().AdminLevel > 0)
                     listDialog.AddItem(adminData.Name);
             }
+
             listDialog.Show(sender);
         }
 
@@ -155,7 +162,8 @@ namespace TruckingGameMode.Commands
                 }
                 else
                 {
-                    sender.SendClientMessage(Color.IndianRed, $"{playerId.Name} is not in your car or you can't eject yourself.");
+                    sender.SendClientMessage(Color.IndianRed,
+                        $"{playerId.Name} is not in your car or you can't eject yourself.");
                 }
             }
             else

@@ -13,7 +13,6 @@ using SampSharp.GameMode.SAMP;
 using SampSharp.GameMode.World;
 using TruckingGameMode.Classes;
 using TruckingGameMode.Classes.Jobs.Trucker;
-using TruckingGameMode.Classes.Spawns;
 using TruckingGameMode.Commands;
 
 namespace TruckingGameMode.World
@@ -178,16 +177,12 @@ namespace TruckingGameMode.World
             ToggleSpectating(true);
 
             if (FetchBanDetails() != null)
-            {
                 if (FetchBanDetails().BanTime <= DateTime.Now)
-                {
                     using (var db = new GamemodeContext())
                     {
                         db.Bans.Remove(FetchBanDetails());
                         db.SaveChanges();
                     }
-                }
-            }
 
 
             if (FetchBanDetails() is null)
@@ -272,25 +267,41 @@ namespace TruckingGameMode.World
                         {
                             case 0:
                             {
-                                var randomIndex = new Random().Next(TruckerSpawn.TruckerSpawns.Count);
-                                SetSpawnInfo(0, Skin, TruckerSpawn.TruckerSpawns[randomIndex].Position,
-                                    TruckerSpawn.TruckerSpawns[randomIndex].Angle);
+                                var randomIndex = new Random().Next(TruckerSpawnModel.GetTruckerSpawnList.Count);
+
+                                SetSpawnInfo(0, Skin,
+                                    new Vector3(TruckerSpawnModel.GetTruckerSpawnList[randomIndex].X,
+                                        TruckerSpawnModel.GetTruckerSpawnList[randomIndex].Y,
+                                        TruckerSpawnModel.GetTruckerSpawnList[randomIndex].Z),
+                                    TruckerSpawnModel.GetTruckerSpawnList[randomIndex].Angle);
+
                                 Spawn();
                                 break;
                             }
                             case 1:
                             {
-                                var dialogSpawnsList = new TablistDialog("Select spawn", 1, "Select", "Cancel");
-                                foreach (var spawn in TruckerSpawn.TruckerSpawns) dialogSpawnsList.Add(spawn.Name);
+                                var dialogSpawnsList = new TablistDialog("Select spawn", 1, "Select", "Back");
+                                foreach (var spawn in TruckerSpawnModel.GetTruckerSpawnList)
+                                    dialogSpawnsList.Add(spawn.Name);
                                 dialogSpawnsList.Show(this);
                                 dialogSpawnsList.Response += (obj, eve) =>
                                 {
+                                    if (eve.DialogButton == DialogButton.Right)
+                                    {
+                                        dialogList.Show(this);
+                                        return;
+                                    }
+
+
                                     switch (eve.ListItem)
                                     {
                                         default:
                                         {
-                                            SetSpawnInfo(0, Skin, TruckerSpawn.TruckerSpawns[eve.ListItem].Position,
-                                                TruckerSpawn.TruckerSpawns[eve.ListItem].Angle);
+                                            SetSpawnInfo(0, Skin, new Vector3(
+                                                    TruckerSpawnModel.GetTruckerSpawnList[eve.ListItem].X,
+                                                    TruckerSpawnModel.GetTruckerSpawnList[eve.ListItem].Y,
+                                                    TruckerSpawnModel.GetTruckerSpawnList[eve.ListItem].Z),
+                                                TruckerSpawnModel.GetTruckerSpawnList[eve.ListItem].Angle);
                                             Spawn();
                                         }
                                             break;
@@ -309,9 +320,14 @@ namespace TruckingGameMode.World
                     }
                     else
                     {
-                        var randomIndex = new Random().Next(TruckerSpawn.TruckerSpawns.Count);
-                        SetSpawnInfo(0, Skin, TruckerSpawn.TruckerSpawns[randomIndex].Position,
-                            TruckerSpawn.TruckerSpawns[randomIndex].Angle);
+                        var randomIndex = new Random().Next(TruckerSpawnModel.GetTruckerSpawnList.Count);
+
+                        SetSpawnInfo(0, Skin,
+                            new Vector3(TruckerSpawnModel.GetTruckerSpawnList[randomIndex].X,
+                                TruckerSpawnModel.GetTruckerSpawnList[randomIndex].Y,
+                                TruckerSpawnModel.GetTruckerSpawnList[randomIndex].Z),
+                            TruckerSpawnModel.GetTruckerSpawnList[randomIndex].Angle);
+
                         Spawn();
                     }
                 };

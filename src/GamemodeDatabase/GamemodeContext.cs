@@ -7,6 +7,7 @@ namespace GamemodeDatabase
     {
         public DbSet<PlayerModel> Players { get; set; }
         public DbSet<PlayerBanModel> Bans { get; set; }
+        public DbSet<TruckerSpawnModel> TruckerSpawns { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
