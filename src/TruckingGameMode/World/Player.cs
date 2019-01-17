@@ -261,19 +261,20 @@ namespace TruckingGameMode.World
             if (PlayerClass == PlayerClasses.TruckDriver)
                 dialogList.Response += (sender, ev) =>
                 {
+                    var spawnsList = TruckerSpawnModel.GetTruckerSpawnListNoTracking;
                     if (ev.DialogButton != DialogButton.Right)
                     {
                         switch (ev.ListItem)
                         {
                             case 0:
                             {
-                                var randomIndex = new Random().Next(TruckerSpawnModel.GetTruckerSpawnList.Count);
+                                var randomIndex = new Random().Next(spawnsList.Count);
 
                                 SetSpawnInfo(0, Skin,
-                                    new Vector3(TruckerSpawnModel.GetTruckerSpawnList[randomIndex].X,
-                                        TruckerSpawnModel.GetTruckerSpawnList[randomIndex].Y,
-                                        TruckerSpawnModel.GetTruckerSpawnList[randomIndex].Z),
-                                    TruckerSpawnModel.GetTruckerSpawnList[randomIndex].Angle);
+                                    new Vector3(spawnsList[randomIndex].X,
+                                        spawnsList[randomIndex].Y,
+                                        spawnsList[randomIndex].Z),
+                                    spawnsList[randomIndex].Angle);
 
                                 Spawn();
                                 break;
@@ -281,7 +282,7 @@ namespace TruckingGameMode.World
                             case 1:
                             {
                                 var dialogSpawnsList = new TablistDialog("Select spawn", 1, "Select", "Back");
-                                foreach (var spawn in TruckerSpawnModel.GetTruckerSpawnList)
+                                foreach (var spawn in spawnsList)
                                     dialogSpawnsList.Add(spawn.Name);
                                 dialogSpawnsList.Show(this);
                                 dialogSpawnsList.Response += (obj, eve) =>
@@ -298,10 +299,10 @@ namespace TruckingGameMode.World
                                         default:
                                         {
                                             SetSpawnInfo(0, Skin, new Vector3(
-                                                    TruckerSpawnModel.GetTruckerSpawnList[eve.ListItem].X,
-                                                    TruckerSpawnModel.GetTruckerSpawnList[eve.ListItem].Y,
-                                                    TruckerSpawnModel.GetTruckerSpawnList[eve.ListItem].Z),
-                                                TruckerSpawnModel.GetTruckerSpawnList[eve.ListItem].Angle);
+                                                    spawnsList[eve.ListItem].X,
+                                                    spawnsList[eve.ListItem].Y,
+                                                    spawnsList[eve.ListItem].Z),
+                                                spawnsList[eve.ListItem].Angle);
                                             Spawn();
                                         }
                                             break;
@@ -320,13 +321,13 @@ namespace TruckingGameMode.World
                     }
                     else
                     {
-                        var randomIndex = new Random().Next(TruckerSpawnModel.GetTruckerSpawnList.Count);
+                        var randomIndex = new Random().Next(spawnsList.Count);
 
                         SetSpawnInfo(0, Skin,
-                            new Vector3(TruckerSpawnModel.GetTruckerSpawnList[randomIndex].X,
-                                TruckerSpawnModel.GetTruckerSpawnList[randomIndex].Y,
-                                TruckerSpawnModel.GetTruckerSpawnList[randomIndex].Z),
-                            TruckerSpawnModel.GetTruckerSpawnList[randomIndex].Angle);
+                            new Vector3(spawnsList[randomIndex].X,
+                                spawnsList[randomIndex].Y,
+                                spawnsList[randomIndex].Z),
+                            spawnsList[randomIndex].Angle);
 
                         Spawn();
                     }

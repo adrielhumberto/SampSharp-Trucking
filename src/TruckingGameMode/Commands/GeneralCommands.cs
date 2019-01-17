@@ -105,7 +105,8 @@ namespace TruckingGameMode.Commands
         public static void OnRescueCommand(BasePlayer sender)
         {
             var dialogSpawnsList = new TablistDialog("Select spawn", 1, "Select", "Cancel");
-            foreach (var spawn in TruckerSpawnModel.GetTruckerSpawnList)
+            var spawnsList = TruckerSpawnModel.GetTruckerSpawnListNoTracking;
+            foreach (var spawn in spawnsList)
                 dialogSpawnsList.Add(spawn.Name);
             dialogSpawnsList.Show(sender);
             dialogSpawnsList.Response += (obj, eve) =>
@@ -117,10 +118,10 @@ namespace TruckingGameMode.Commands
                 {
                     default:
                     {
-                        sender.Position = new Vector3(TruckerSpawnModel.GetTruckerSpawnList[eve.ListItem].X,
-                            TruckerSpawnModel.GetTruckerSpawnList[eve.ListItem].Y,
-                            TruckerSpawnModel.GetTruckerSpawnList[eve.ListItem].Z);
-                        sender.Angle = TruckerSpawnModel.GetTruckerSpawnList[eve.ListItem].Angle;
+                        sender.Position = new Vector3(spawnsList[eve.ListItem].X,
+                            spawnsList[eve.ListItem].Y,
+                            spawnsList[eve.ListItem].Z);
+                        sender.Angle = spawnsList[eve.ListItem].Angle;
                     }
                         break;
                 }
