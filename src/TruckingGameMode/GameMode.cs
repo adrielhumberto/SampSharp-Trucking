@@ -1,4 +1,5 @@
 ﻿using System;
+using GamemodeDatabase;
 using SampSharp.GameMode;
 using SampSharp.GameMode.Controllers;
 using SampSharp.GameMode.Definitions;
@@ -95,6 +96,16 @@ namespace TruckingGameMode
         protected override void OnPlayerCommandText(BasePlayer player, CommandTextEventArgs e)
         {
             if (player is Player playerData && playerData.IsLogged) base.OnPlayerCommandText(player, e);
+        }
+
+        protected override void OnExited(EventArgs e)
+        {
+            using (var db = new GamemodeContext())
+            {
+                db.SaveChanges();
+            }
+
+            base.OnExited(e);
         }
     }
 }
