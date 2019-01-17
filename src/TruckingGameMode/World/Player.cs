@@ -355,8 +355,6 @@ namespace TruckingGameMode.World
 
             SendClientMessageToAll(Color, message);
 
-            BaseVehicle.Create(VehicleModelType.Alpha, Position, 0.0f, 3, 3);
-
             base.OnSpawned(e);
         }
 
