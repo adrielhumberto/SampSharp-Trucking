@@ -214,10 +214,10 @@ namespace TruckingGameMode.World
 
         public override void OnKeyStateChanged(KeyStateChangedEventArgs e)
         {
-            base.OnKeyStateChanged(e);
-
             if(KeyUtils.HasPressed(e.NewKeys, e.OldKeys, Keys.LookBehind))
                 GeneralCommands.OnEngineCommand(this);
+
+            base.OnKeyStateChanged(e);
         }
 
         public override async void OnRequestClass(RequestClassEventArgs e)
