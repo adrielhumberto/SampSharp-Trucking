@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Data.Common;
 using GamemodeDatabase;
+using Microsoft.EntityFrameworkCore;
 using SampSharp.GameMode;
 using SampSharp.GameMode.Controllers;
 using SampSharp.GameMode.Definitions;
@@ -28,6 +30,26 @@ namespace TruckingGameMode
 
         protected override void OnInitialized(EventArgs e)
         {
+            #region Database checking
+
+            try
+            {
+                using (var db = new GamemodeContext())
+                {
+                    db.Database.OpenConnection();
+                    db.Database.CloseConnection();
+                }
+            }
+            catch (DbException)
+            {
+                Console.WriteLine("Connection with the database can't be established.");
+                Console.WriteLine("Server shutting down.");
+                Environment.Exit(1);
+            }
+
+
+            #endregion
+
             #region GameMode settings
 
             ShowPlayerMarkers(PlayerMarkersMode.Global);
