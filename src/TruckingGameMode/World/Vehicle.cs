@@ -9,6 +9,8 @@ namespace TruckingGameMode.World
     [PooledType]
     public class Vehicle : BaseVehicle
     {
+        public bool AdminSpawned { get; set; }
+
         #region Ovverides of create static functions
 
         public new static Vehicle Create(VehicleModelType vehicletype, Vector3 position, float rotation, int color1,

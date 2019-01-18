@@ -341,5 +341,19 @@ namespace TruckingGameMode.Commands.AdminCommands
                 };
             };
         }
+
+        [Command("vehiclespawn", "vehicle", Shortcut = "v")]
+        public static void OnCarCommand(BasePlayer sender, int model)
+        {
+            if (sender.Vehicle != null)
+            {
+                sender.SendClientMessage(Color.IndianRed, "You are already in a car.");
+                return;
+            }
+
+            var car = Vehicle.Create((VehicleModelType) model, sender.Position, 90.0f, 2, 2);
+            car.AdminSpawned = true;
+            sender.PutInVehicle(car, 0);
+        }
     }
 }
