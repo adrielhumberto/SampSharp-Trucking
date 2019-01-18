@@ -1,5 +1,9 @@
 ﻿using System.Linq;
+using BCrypt;
+using Dapper;
+using GamemodeDatabase;
 using GamemodeDatabase.Models;
+using MySql.Data.MySqlClient;
 using SampSharp.GameMode;
 using SampSharp.GameMode.Definitions;
 using SampSharp.GameMode.Display;
@@ -12,6 +16,33 @@ namespace TruckingGameMode.Commands
 {
     public class GeneralCommands
     {
+        [Command("changepass")]
+        public static async void OnChangePassCommand(Player sender)
+        {
+            var newPasswordDialog = new InputDialog("Change password", "Input the new password", true, "Accept", "close");
+            await newPasswordDialog.ShowAsync(sender);
+
+            newPasswordDialog.Response += async (obj, ev) =>
+            {
+                if(ev.DialogButton == DialogButton.Right)
+                    return;
+
+                var salt = BCryptHelper.GenerateSalt(12);
+                var hash = BCryptHelper.HashPassword(ev.InputText, salt);
+
+                using (var db = new MySqlConnection(DapperHelper.ConnectionString))
+                {
+                    const string updatequery = @"UPDATE players SET Password = @Password WHERE Name = @PName";
+                    await db.ExecuteAsync(updatequery, new
+                    {
+                        Password = hash,
+                        PName = sender.Name
+                    });
+                }
+
+            };
+        }
+
         [Command("pm")]
         public static void OnPmCommand(BasePlayer sender, BasePlayer playerId, string message)
         {
