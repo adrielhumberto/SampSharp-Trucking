@@ -6,7 +6,7 @@ namespace TruckingGameMode.Classes.Jobs.Trucker
 {
     public class TruckerJobLocation
     {
-        public static List<TruckerJobLocation> JobLocations = new List<TruckerJobLocation>
+        public static readonly List<TruckerJobLocation> JobLocations = new List<TruckerJobLocation>
         {
             new TruckerJobLocation("LVA Freight Market", new Vector3(1422.2754, 1052.8458, 10.6228),
                 new Vector3(1416.0120, 1060.9197, 10.8130), 86.3904f),
@@ -73,7 +73,7 @@ namespace TruckingGameMode.Classes.Jobs.Trucker
         };
 
 
-        public TruckerJobLocation(string name, Vector3 position, Vector3 spawnPosition, float spawnRotation)
+        private TruckerJobLocation(string name, Vector3 position, Vector3 spawnPosition, float spawnRotation)
         {
             Name = name;
             Position = position;
@@ -81,11 +81,11 @@ namespace TruckingGameMode.Classes.Jobs.Trucker
             SpawnRotation = spawnRotation;
         }
 
-        public string Name { get; set; }
-        public Vector3 Position { get; set; }
+        public string Name { get; }
+        public Vector3 Position { get;  }
 
-        public Vector3 SpawnPosition { get; set; }
-        public float SpawnRotation { get; set; }
+        public Vector3 SpawnPosition { get; }
+        public float SpawnRotation { get;  }
 
         public DynamicMapIcon MapIcon { get; set; }
         public DynamicCheckpoint Checkpoint { get; set; }
