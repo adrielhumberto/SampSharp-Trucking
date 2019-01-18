@@ -245,5 +245,25 @@ namespace TruckingGameMode.Commands
                 sender.SendClientMessage(Color.IndianRed, "Your vehicle doesn't have any trailer.");
             }
         }
+
+        [Command("report")]
+        public static void OnReportCommand(BasePlayer sender, BasePlayer playerId, string reason)
+        {
+            Report.Reports.Add(new Report
+            {
+                IssuerName = sender.Name,
+                ReportedName = playerId.Name,
+                Message = reason
+            });
+
+            sender.SendClientMessage(Color.GreenYellow, "You report has been submitted to our admins!");
+
+            foreach (var admin in BasePlayer.All)
+            {
+                var adminData = admin as Player;
+                if(adminData.PlayerData().AdminLevel > 0)
+                    adminData.SendClientMessage(Color.Red, $"New report from {sender.Name}. Type /reports to view it!");
+            }
+        }
     }
 }

@@ -6,6 +6,7 @@ using GamemodeDatabase;
 using MySql.Data.MySqlClient;
 using SampSharp.GameMode;
 using SampSharp.GameMode.Definitions;
+using SampSharp.GameMode.Display;
 using SampSharp.GameMode.SAMP;
 using SampSharp.GameMode.SAMP.Commands;
 using SampSharp.GameMode.World;
@@ -297,6 +298,48 @@ namespace TruckingGameMode.Commands.AdminCommands
             Server.SetWeather(weatherId);
             sender.SendClientMessage(Color.GreenYellow,
                 $"You successfully changed the weather to weather id: {weatherId}.");
+        }
+
+        [Command("reports", Shortcut = "reports")]
+        public static void OnReportsCommand(BasePlayer sender)
+        {
+            var dialog = new TablistDialog("Reports list", 3, "Select", "Close") {Style = DialogStyle.TablistHeaders};
+            var rowId = 0;
+            dialog.Add("ID", "Issuer", "Reported");
+            foreach (var report in Report.Reports)
+            {
+                dialog.Add(rowId.ToString(), report.IssuerName, report.ReportedName);
+                rowId++;
+            }
+
+            dialog.Show(sender);
+            dialog.Response += (objSender, ev) =>
+            {
+                if (ev.DialogButton == DialogButton.Right)
+                    return;
+
+                var report = Report.Reports[ev.ListItem];
+                var messageDialog = new MessageDialog($"Report of: {report.ReportedName}",
+                    $"Reason of reporting:\n{report.Message}", "Delete", "Close");
+                messageDialog.Show(sender);
+
+                foreach (var player in BasePlayer.All)
+                    if (player.Name == report.IssuerName)
+                        player.SendClientMessage(Color.GreenYellow, $"Your report has been view by {sender.Name}");
+
+                messageDialog.Response += (sender1, ev1) =>
+                {
+                    if (ev1.DialogButton == DialogButton.Right)
+                        return;
+
+                    Report.Reports.Remove(report);
+                    Report.Reports.TrimExcess();
+
+                    foreach (var player in BasePlayer.All)
+                        if (player.Name == report.IssuerName)
+                            player.SendClientMessage(Color.IndianRed, $"Your report was closed by: {sender.Name}");
+                };
+            };
         }
     }
 }
