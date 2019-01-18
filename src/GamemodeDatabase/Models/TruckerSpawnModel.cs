@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
+using Dapper;
+using MySql.Data.MySqlClient;
 
 namespace GamemodeDatabase.Models
 {
@@ -18,9 +19,9 @@ namespace GamemodeDatabase.Models
         {
             get
             {
-                using (var db = new GamemodeContext())
+                using (var db = new MySqlConnection(DapperHelper.ConnectionString))
                 {
-                    return db.TruckerSpawns.AsNoTracking().ToList();
+                    return db.Query<TruckerSpawnModel>("SELECT * FROM truckerspawns").ToList();
                 }
             }
         }

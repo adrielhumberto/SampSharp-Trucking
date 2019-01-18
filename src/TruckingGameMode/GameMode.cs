@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data.Common;
 using GamemodeDatabase;
-using Microsoft.EntityFrameworkCore;
+using MySql.Data.MySqlClient;
 using SampSharp.GameMode;
 using SampSharp.GameMode.Controllers;
 using SampSharp.GameMode.Definitions;
@@ -34,10 +34,10 @@ namespace TruckingGameMode
 
             try
             {
-                using (var db = new GamemodeContext())
+                using (var db = new MySqlConnection(DapperHelper.ConnectionString))
                 {
-                    db.Database.OpenConnection();
-                    db.Database.CloseConnection();
+                    db.Open();
+                    db.Close();
                 }
             }
             catch (DbException)
@@ -46,7 +46,6 @@ namespace TruckingGameMode
                 Console.WriteLine("Server shutting down.");
                 Environment.Exit(1);
             }
-
 
             #endregion
 
@@ -61,6 +60,7 @@ namespace TruckingGameMode
 
             SetGameModeText("Trucking#");
             SendRconCommand("hostname Trucking Evolved");
+            SendRconCommand("language English");
 
             #endregion
 
@@ -118,16 +118,6 @@ namespace TruckingGameMode
         protected override void OnPlayerCommandText(BasePlayer player, CommandTextEventArgs e)
         {
             if (player is Player playerData && playerData.IsLogged) base.OnPlayerCommandText(player, e);
-        }
-
-        protected override void OnExited(EventArgs e)
-        {
-            using (var db = new GamemodeContext())
-            {
-                db.SaveChanges();
-            }
-
-            base.OnExited(e);
         }
     }
 }

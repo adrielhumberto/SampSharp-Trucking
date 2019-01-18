@@ -7,7 +7,7 @@ namespace TruckingGameMode.Controllers
     {
         public override void RegisterTypes()
         {
-             Vehicle.Register<Vehicle>();
+            Vehicle.Register<Vehicle>();
         }
     }
 }

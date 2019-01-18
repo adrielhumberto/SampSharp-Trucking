@@ -111,7 +111,7 @@ namespace TruckingGameMode.Commands
             dialogSpawnsList.Show(sender);
             dialogSpawnsList.Response += (obj, eve) =>
             {
-                if(eve.DialogButton == DialogButton.Right)
+                if (eve.DialogButton == DialogButton.Right)
                     return;
 
                 switch (eve.ListItem)
@@ -144,7 +144,7 @@ namespace TruckingGameMode.Commands
             foreach (var admin in BasePlayer.All)
             {
                 var adminData = admin as Player;
-                if (adminData?.FetchPlayerAccountData().AdminLevel > 0)
+                if (adminData?.PlayerData().AdminLevel > 0)
                     listDialog.AddItem(adminData.Name);
             }
 

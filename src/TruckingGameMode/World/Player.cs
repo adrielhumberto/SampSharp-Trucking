@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using BCrypt;
+using Dapper;
 using GamemodeDatabase;
 using GamemodeDatabase.Models;
-using Microsoft.EntityFrameworkCore;
+using MySql.Data.MySqlClient;
 using SampSharp.GameMode;
 using SampSharp.GameMode.Definitions;
 using SampSharp.GameMode.Display;
@@ -29,76 +29,74 @@ namespace TruckingGameMode.World
 
         public override int Money
         {
-            get => FetchPlayerAccountData().Money;
+            get => PlayerData().Money;
             set
             {
-                using (var db = new GamemodeContext())
+                using (var db = new MySqlConnection(DapperHelper.ConnectionString))
                 {
-                    FetchPlayerAccountData(db).Money = value;
-                    db.SaveChanges();
+                    const string updateQuery = @"UPDATE players SET Money = Money + @Money WHERE Name = @PName";
+                    db.Execute(updateQuery, new
+                    {
+                        Money = value,
+                        PNAme = Name
+                    });
                 }
 
-                base.Money = FetchPlayerAccountData().Money;
+                base.Money = PlayerData().Money;
             }
         }
 
         public int TruckerJobs
         {
-            get => FetchPlayerAccountData().TruckerJobs;
+            get => PlayerData().TruckerJobs;
             set
             {
-                using (var db = new GamemodeContext())
+                using (var db = new MySqlConnection(DapperHelper.ConnectionString))
                 {
-                    FetchPlayerAccountData(db).TruckerJobs += value;
-                    db.SaveChanges();
+                    const string updateQuery =
+                        @"UPDATE players SET TruckerJobs = TruckerJobs + @Value WHERE Name = @PName";
+                    db.Execute(updateQuery, new
+                    {
+                        Value = value,
+                        PName = Name
+                    });
                 }
             }
         }
 
-        public PlayerModel FetchPlayerAccountData()
+        public PlayerModel PlayerData()
         {
-            using (var db = new GamemodeContext())
+            using (var db = new MySqlConnection(DapperHelper.ConnectionString))
             {
-                return db.Players.AsNoTracking().FirstOrDefault(x => x.Name == Name);
+                const string selectQuery = @"SELECT * FROM players WHERE Name = @PName";
+                return db.QueryFirstOrDefault<PlayerModel>(selectQuery, new
+                {
+                    PName = Name
+                });
             }
         }
 
-        public PlayerBanModel FetchBanDetails()
+        public PlayerBanModel PlayerBan()
         {
-            using (var db = new GamemodeContext())
+            using (var db = new MySqlConnection(DapperHelper.ConnectionString))
             {
-                return db.Bans.FirstOrDefault(x => x.Name == Name);
+                const string selectQuery = @"SELECT * FROM bans WHERE Name = @BanName";
+                return db.QueryFirstOrDefault<PlayerBanModel>(selectQuery, new
+                {
+                    BanName = Name
+                });
             }
-        }
-
-        public PlayerModel FetchPlayerAccountData(GamemodeContext db)
-        {
-            return db.Players.FirstOrDefault(x => x.Name == Name);
         }
 
         private Vector3 GetPlayerPositionVector3FromDatabase()
         {
-            return new Vector3(FetchPlayerAccountData().PositionX, FetchPlayerAccountData().PositionY,
-                FetchPlayerAccountData().PositionZ);
-        }
-
-        public void SavePlayerPosition()
-        {
-            using (var db = new GamemodeContext())
-            {
-                FetchPlayerAccountData(db).PositionX = Position.X;
-                FetchPlayerAccountData(db).PositionY = Position.Y;
-                FetchPlayerAccountData(db).PositionZ = Position.Z;
-                FetchPlayerAccountData(db).FacingAngle = Angle;
-
-                db.SaveChanges();
-            }
+            return new Vector3(PlayerData().PositionX, PlayerData().PositionY, PlayerData().PositionZ);
         }
 
         public static void SendMessageToAdmins(Color color, string message)
         {
             foreach (var admin in All)
-                if (admin is Player adminData && adminData.FetchPlayerAccountData().AdminLevel > 0)
+                if (admin is Player adminData && adminData.PlayerData().AdminLevel > 0)
                     admin.SendClientMessage(color, message);
         }
 
@@ -116,10 +114,10 @@ namespace TruckingGameMode.World
                     if (LoginTries >= Config.MaximumLoginTries)
                     {
                         SendClientMessage(Color.OrangeRed, "You exceed maximum login tries. You have been kicked!");
-                        await Task.Delay(300);
+                        await Task.Delay(Config.KickDelay);
                         Kick();
                     }
-                    else if (BCryptHelper.CheckPassword(ev.InputText, FetchPlayerAccountData().Password))
+                    else if (BCryptHelper.CheckPassword(ev.InputText, PlayerData().Password))
                     {
                         ToggleSpectating(false);
                         IsLogged = true;
@@ -148,18 +146,16 @@ namespace TruckingGameMode.World
             dialog.Response += (sender, ev) =>
             {
                 if (ev.DialogButton == DialogButton.Left)
-                    using (var db = new GamemodeContext())
+                    using (var db = new MySqlConnection(DapperHelper.ConnectionString))
                     {
                         var salt = BCryptHelper.GenerateSalt(12);
                         var hash = BCryptHelper.HashPassword(ev.InputText, salt);
-                        var player = new PlayerModel
+                        const string insertQuery = @"INSERT INTO players(Name, Password) VALUES (@PName, @Password)";
+                        db.Execute(insertQuery, new
                         {
-                            Password = hash,
-                            Name = Name,
-                            JoinedDate = DateTime.Now
-                        };
-                        db.Players.Add(player);
-                        db.SaveChanges();
+                            PName = Name,
+                            Password = hash
+                        });
 
                         LoginPlayer();
                     }
@@ -178,33 +174,36 @@ namespace TruckingGameMode.World
 
             ToggleSpectating(true);
 
-            if (FetchBanDetails() != null)
-                if (FetchBanDetails().BanTime <= DateTime.Now)
-                    using (var db = new GamemodeContext())
+            if (PlayerBan() != null)
+                if (PlayerBan().BanTime <= DateTime.Now)
+                    using (var db = new MySqlConnection(DapperHelper.ConnectionString))
                     {
-                        db.Bans.Remove(FetchBanDetails());
-                        db.SaveChanges();
+                        const string deleteQuery = @"DELETE FROM bans WHERE Name = @BanName";
+                        db.Execute(deleteQuery, new
+                        {
+                            BanName = Name
+                        });
                     }
 
 
-            if (FetchBanDetails() is null)
+            if (PlayerBan() is null)
             {
-                if (FetchPlayerAccountData() is null)
+                if (PlayerData() is null)
                     RegisterPlayer();
                 else
                     LoginPlayer();
             }
             else
             {
-                var message = $"Name: {FetchBanDetails().Name}\n" +
-                              $"Admin Name: {FetchBanDetails().AdminName}\n" +
-                              $"Reason: {FetchBanDetails().Reason}\n" +
-                              $"Issued at: {FetchBanDetails().IssuedTime:dd/MM/yyyy HH:mm}\n" +
-                              $"Banned until: {FetchBanDetails().BanTime:dd/MM/yyyy HH:mm}";
+                var message = $"Name: {PlayerBan().Name}\n" +
+                              $"Admin Name: {PlayerBan().AdminName}\n" +
+                              $"Reason: {PlayerBan().Reason}\n" +
+                              $"Issued at: {PlayerBan().IssuedTime:dd/MM/yyyy HH:mm}\n" +
+                              $"Banned until: {PlayerBan().BanTime:dd/MM/yyyy HH:mm}";
 
                 var infoDialog = new MessageDialog("Ban details", message, "OK");
                 infoDialog.Show(this);
-                await Task.Delay(100);
+                await Task.Delay(Config.KickDelay);
                 Kick();
             }
 
@@ -214,7 +213,7 @@ namespace TruckingGameMode.World
 
         public override void OnKeyStateChanged(KeyStateChangedEventArgs e)
         {
-            if(KeyUtils.HasPressed(e.NewKeys, e.OldKeys, Keys.LookBehind))
+            if (KeyUtils.HasPressed(e.NewKeys, e.OldKeys, Keys.LookBehind))
                 GeneralCommands.OnEngineCommand(this);
 
             base.OnKeyStateChanged(e);
@@ -225,7 +224,7 @@ namespace TruckingGameMode.World
             if (!IsLogged)
             {
                 SendClientMessage(Color.IndianRed, "You did not log in successfully. You have been kicked.");
-                await Task.Delay(100);
+                await Task.Delay(Config.KickDelay);
                 Kick();
             }
 
@@ -315,8 +314,7 @@ namespace TruckingGameMode.World
                                 break;
                             case 2:
                             {
-                                SetSpawnInfo(0, Skin, GetPlayerPositionVector3FromDatabase(),
-                                    FetchPlayerAccountData().FacingAngle);
+                                SetSpawnInfo(0, Skin, GetPlayerPositionVector3FromDatabase(), PlayerData().FacingAngle);
                                 Spawn();
                             }
                                 break;
@@ -364,16 +362,16 @@ namespace TruckingGameMode.World
         {
             e.SendToPlayers = false;
 
-            if (FetchPlayerAccountData().MuteTime > DateTime.Now)
+            if (PlayerData().MuteTime > DateTime.Now)
             {
                 SendClientMessage(Color.IndianRed,
-                    DateTime.Now.Subtract(FetchPlayerAccountData().MuteTime).Minutes != 0
-                        ? $"You are currently muted for {FetchPlayerAccountData().MuteTime.Subtract(DateTime.Now).Minutes} more minutes."
-                        : $"You are currently muted for {FetchPlayerAccountData().MuteTime.Subtract(DateTime.Now).Seconds} more seconds.");
+                    DateTime.Now.Subtract(PlayerData().MuteTime).Minutes != 0
+                        ? $"You are currently muted for {PlayerData().MuteTime.Subtract(DateTime.Now).Minutes} more minutes."
+                        : $"You are currently muted for {PlayerData().MuteTime.Subtract(DateTime.Now).Seconds} more seconds.");
                 return;
             }
 
-            if (FetchPlayerAccountData().AdminLevel > 0)
+            if (PlayerData().AdminLevel > 0)
                 if (e.Text.StartsWith('@'))
                 {
                     SendMessageToAdmins(Color.Gold, $"[AC] {Name}: {e.Text.Remove(0, 1)}");
@@ -386,15 +384,25 @@ namespace TruckingGameMode.World
             base.OnText(e);
         }
 
+        private void SavePlayerLastPosition()
+        {
+            using (var db = new MySqlConnection(DapperHelper.ConnectionString))
+            {
+                const string updateQuery =
+                    @"UPDATE players SET PositionX = @PositionX, PositionY = @PositionY, PositionZ = @PositionZ WHERE Name = @PName";
+                db.Execute(updateQuery, new
+                {
+                    PositionX = Position.X,
+                    PositionY = Position.Y,
+                    PositionZ = Position.Z,
+                    PName = Name
+                });
+            }
+        }
+
         public override void OnDisconnected(DisconnectEventArgs e)
         {
-            SavePlayerPosition();
-
-            using (var db = new GamemodeContext())
-            {
-                FetchPlayerAccountData(db).LastActive = DateTime.Now;
-                db.SaveChanges();
-            }
+            SavePlayerLastPosition();
 
             if (CurrentJob != null)
             {
@@ -405,19 +413,18 @@ namespace TruckingGameMode.World
             base.OnDisconnected(e);
         }
 
-        public override void OnDeath(DeathEventArgs e)
-        {
-            SavePlayerPosition();
-
-            base.OnDeath(e);
-        }
-
         public override void OnEnterVehicle(EnterVehicleEventArgs e)
         {
             if (e.Vehicle.Engine == false)
                 SendClientMessage(Color.CadetBlue, "Press key 2 to start your vehicle engine.");
 
             base.OnEnterVehicle(e);
+        }
+
+        public override void OnDeath(DeathEventArgs e)
+        {
+            SavePlayerLastPosition();
+            base.OnDeath(e);
         }
 
         #endregion

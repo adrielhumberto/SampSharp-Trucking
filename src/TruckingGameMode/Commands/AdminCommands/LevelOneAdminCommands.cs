@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
 using GamemodeDatabase;
-using GamemodeDatabase.Models;
+using MySql.Data.MySqlClient;
 using SampSharp.GameMode;
 using SampSharp.GameMode.Definitions;
 using SampSharp.GameMode.SAMP;
@@ -175,7 +176,6 @@ namespace TruckingGameMode.Commands.AdminCommands
         public static void OnResPawnAllCarsCommand(BasePlayer sender)
         {
             foreach (var car in BaseVehicle.All)
-            {
                 if (car.Model == VehicleModelType.ArticleTrailer || car.Model == VehicleModelType.ArticleTrailer2 ||
                     car.Model == VehicleModelType.ArticleTrailer3 || car.Model == VehicleModelType.PetrolTrailer)
                 {
@@ -185,7 +185,6 @@ namespace TruckingGameMode.Commands.AdminCommands
                 {
                     car.Respawn();
                 }
-            }
 
             BasePlayer.SendClientMessageToAll(Color.GreenYellow, $"Admin {sender.Name} respawned all unused vehicles.");
         }
@@ -196,36 +195,34 @@ namespace TruckingGameMode.Commands.AdminCommands
             string message;
             if (days == 0)
             {
-                using (var db = new GamemodeContext())
+                using (var db = new MySqlConnection(DapperHelper.ConnectionString))
                 {
-                    var ban = new PlayerBanModel
+                    const string insertQuery =
+                        @"INSERT INTO bans (Name, AdminName, Reason, BanTime) VALUES (@BanName, @AdminName, @Reason, @BanTime)";
+                    await db.ExecuteAsync(insertQuery, new
                     {
-                        Name = playerId.Name,
+                        BanName = playerId.Name,
                         AdminName = sender.Name,
                         Reason = reason,
-                        BanTime = DateTime.MaxValue,
-                        IssuedTime = DateTime.Now
-                    };
-                    await db.Bans.AddAsync(ban);
-                    await db.SaveChangesAsync();
+                        BanTime = DateTime.MaxValue
+                    });
                 }
 
                 message = $"Admin {sender.Name} banned you permanently from this server. Reason: {reason}.";
             }
             else
             {
-                using (var db = new GamemodeContext())
+                using (var db = new MySqlConnection(DapperHelper.ConnectionString))
                 {
-                    var ban = new PlayerBanModel
+                    const string insertQuery =
+                        @"INSERT INTO bans (Name, AdminName, Reason, BanTime) VALUES (@BanName, @AdminName, @Reason, @BanTime)";
+                    await db.ExecuteAsync(insertQuery, new
                     {
-                        Name = playerId.Name,
+                        BanName = playerId.Name,
                         AdminName = sender.Name,
                         Reason = reason,
-                        BanTime = DateTime.Now.AddDays(days),
-                        IssuedTime = DateTime.Now
-                    };
-                    await db.Bans.AddAsync(ban);
-                    await db.SaveChangesAsync();
+                        BanTime = DateTime.MaxValue
+                    });
                 }
 
                 message = $"Admin {sender.Name} banned you for {days} days from this server. Reason: {reason}.";
@@ -249,29 +246,39 @@ namespace TruckingGameMode.Commands.AdminCommands
                 return;
             }
 
-            using (var db = new GamemodeContext())
+            using (var db = new MySqlConnection(DapperHelper.ConnectionString))
             {
-                playerId.FetchPlayerAccountData(db).MuteTime = DateTime.Now.AddMinutes(minutes);
-                db.SaveChanges();
+                const string updateQuery = @"UPDATE players SET MuteTime = @MuteTime WHERE Name = @PName";
+                db.Execute(updateQuery, new
+                {
+                    MuteTime = DateTime.Now.AddMinutes(minutes),
+                    PName = playerId.Name
+                });
             }
 
-            playerId.SendClientMessage(Color.IndianRed, $"You got muted for {minutes} minutes by admin {sender.Name} Reason: {reason}.");
-            sender.SendClientMessage(Color.GreenYellow, $"You successfully muted {playerId.Name} for {minutes} minutes.");
+            playerId.SendClientMessage(Color.IndianRed,
+                $"You got muted for {minutes} minutes by admin {sender.Name} Reason: {reason}.");
+            sender.SendClientMessage(Color.GreenYellow,
+                $"You successfully muted {playerId.Name} for {minutes} minutes.");
         }
 
         [Command("unmute", Shortcut = "unmute")]
         public static void OnUnMuteCommand(BasePlayer sender, Player playerId)
         {
-            if (playerId.FetchPlayerAccountData().MuteTime < DateTime.Now)
+            if (playerId.PlayerData().MuteTime < DateTime.Now)
             {
                 sender.SendClientMessage(Color.IndianRed, $"{playerId.Name} is not currently muted.");
                 return;
             }
 
-            using (var db = new GamemodeContext())
+            using (var db = new MySqlConnection(DapperHelper.ConnectionString))
             {
-                playerId.FetchPlayerAccountData(db).MuteTime = DateTime.Now;
-                db.SaveChanges();
+                const string updateQuery = @"UPDATE players SET MuteTime = @MuteTime WHERE Name = @PName";
+                db.Execute(updateQuery, new
+                {
+                    MuteTime = DateTime.Now,
+                    PName = playerId.Name
+                });
             }
 
             sender.SendClientMessage(Color.GreenYellow, $"You successfully unmuted {playerId.Name}.");
@@ -288,7 +295,8 @@ namespace TruckingGameMode.Commands.AdminCommands
             }
 
             Server.SetWeather(weatherId);
-            sender.SendClientMessage(Color.GreenYellow, $"You successfully changed the weather to weather id: {weatherId}.");
+            sender.SendClientMessage(Color.GreenYellow,
+                $"You successfully changed the weather to weather id: {weatherId}.");
         }
     }
 }

@@ -13,7 +13,7 @@ namespace GamemodeDatabase.Models
         public float PositionX { get; set; }
         public float PositionY { get; set; }
         public float PositionZ { get; set; }
-        public float FacingAngle { get; set; }  
+        public float FacingAngle { get; set; }
 
         public byte AdminLevel { get; set; }
         public int Money { get; set; }

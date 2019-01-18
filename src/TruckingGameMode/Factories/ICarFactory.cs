@@ -1,7 +1,6 @@
 ﻿using SampSharp.GameMode;
 using SampSharp.GameMode.Definitions;
 using SampSharp.GameMode.Factories;
-using SampSharp.GameMode.World;
 using TruckingGameMode.World;
 
 namespace TruckingGameMode.Factories
