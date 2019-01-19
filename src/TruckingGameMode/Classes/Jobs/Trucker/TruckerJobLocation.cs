@@ -82,10 +82,10 @@ namespace TruckingGameMode.Classes.Jobs.Trucker
         }
 
         public string Name { get; }
-        public Vector3 Position { get;  }
+        public Vector3 Position { get; }
 
         public Vector3 SpawnPosition { get; }
-        public float SpawnRotation { get;  }
+        public float SpawnRotation { get; }
 
         public DynamicMapIcon MapIcon { get; set; }
         public DynamicCheckpoint Checkpoint { get; set; }

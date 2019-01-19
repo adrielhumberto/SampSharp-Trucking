@@ -19,12 +19,13 @@ namespace TruckingGameMode.Commands
         [Command("changepass")]
         public static async void OnChangePassCommand(Player sender)
         {
-            var newPasswordDialog = new InputDialog("Change password", "Input the new password", true, "Accept", "close");
+            var newPasswordDialog =
+                new InputDialog("Change password", "Input the new password", true, "Accept", "close");
             await newPasswordDialog.ShowAsync(sender);
 
             newPasswordDialog.Response += async (obj, ev) =>
             {
-                if(ev.DialogButton == DialogButton.Right)
+                if (ev.DialogButton == DialogButton.Right)
                     return;
 
                 var salt = BCryptHelper.GenerateSalt(12);
@@ -39,7 +40,6 @@ namespace TruckingGameMode.Commands
                         PName = sender.Name
                     });
                 }
-
             };
         }
 
@@ -261,7 +261,7 @@ namespace TruckingGameMode.Commands
             foreach (var admin in BasePlayer.All)
             {
                 var adminData = admin as Player;
-                if(adminData.PlayerData().AdminLevel > 0)
+                if (adminData.PlayerData().AdminLevel > 0)
                     adminData.SendClientMessage(Color.Red, $"New report from {sender.Name}. Type /reports to view it!");
             }
         }
