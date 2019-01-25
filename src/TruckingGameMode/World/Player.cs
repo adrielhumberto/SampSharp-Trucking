@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using BCrypt;
 using Dapper;
 using GamemodeDatabase;
-using GamemodeDatabase.Models;
+using GamemodeDatabase.Data;
 using MySql.Data.MySqlClient;
 using SampSharp.GameMode;
 using SampSharp.GameMode.Definitions;
@@ -34,8 +34,7 @@ namespace TruckingGameMode.World
             {
                 using (var db = new MySqlConnection(DapperHelper.ConnectionString))
                 {
-                    const string updateQuery = @"UPDATE players SET Money = Money + @Money WHERE Name = @PName";
-                    db.Execute(updateQuery, new
+                    db.Execute(@"UPDATE players SET Money = @Money WHERE Name = @PName", new
                     {
                         Money = value,
                         PNAme = Name
