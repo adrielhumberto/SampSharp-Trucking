@@ -19,13 +19,19 @@ namespace TruckingGameMode.Commands.AdminCommands
     public class LevelOneAdminCommands
     {
         [Command("kick", Shortcut = "kick")]
-        public static async void OnKickCommand(BasePlayer sender, BasePlayer playerId, string reason)
+        public static async void OnKickCommand(BasePlayer sender, Player playerId, string reason)
         {
+            if (playerId.PlayerData().AdminLevel > 0)
+            {
+                sender.SendClientMessage(Color.IndianRed, "You can't kick other admin.");
+                return;
+            }
+
             sender.SendClientMessage(Color.GreenYellow, $"You kicked {playerId.Name}");
             playerId.SendClientMessage(Color.IndianRed,
                 $"You have been kicked from the server by {sender.Name}. Reason: {reason}");
 
-            await Task.Delay(100);
+            await Task.Delay(Config.KickDelay);
             playerId.Kick();
 
             BasePlayer.SendClientMessageToAll(Color.IndianRed, $"{playerId.Name} has been kicked from the server.");
@@ -120,8 +126,14 @@ namespace TruckingGameMode.Commands.AdminCommands
         }
 
         [Command("freeze", Shortcut = "freeze")]
-        public static void OnFreezeCommand(BasePlayer sender, BasePlayer playerId)
+        public static void OnFreezeCommand(BasePlayer sender, Player playerId)
         {
+            if (playerId.PlayerData().AdminLevel > 0)
+            {
+                sender.SendClientMessage(Color.IndianRed, "You can't freeze other admin.");
+                return;
+            }
+
             playerId.ToggleControllable(false);
             playerId.SendClientMessage(Color.IndianRed, $"You have been freeze by admin {sender.Name}.");
 
@@ -152,8 +164,14 @@ namespace TruckingGameMode.Commands.AdminCommands
         }
 
         [Command("warn", Shortcut = "warn")]
-        public static void OnWarnCommand(BasePlayer sender, BasePlayer playerId, string reason)
+        public static void OnWarnCommand(BasePlayer sender, Player playerId, string reason)
         {
+            if (playerId.PlayerData().AdminLevel > 0)
+            {
+                sender.SendClientMessage(Color.IndianRed, "You can't warn other admin.");
+                return;
+            }
+
             if (string.IsNullOrEmpty(reason))
                 return;
 
@@ -191,8 +209,14 @@ namespace TruckingGameMode.Commands.AdminCommands
         }
 
         [Command("ban", Shortcut = "ban")]
-        public static async void OnBanCommand(BasePlayer sender, BasePlayer playerId, string reason, int days = 0)
+        public static async void OnBanCommand(BasePlayer sender, Player playerId, string reason, int days = 0)
         {
+            if (playerId.PlayerData().AdminLevel > 0)
+            {
+                sender.SendClientMessage(Color.IndianRed, "You can't ban other admin.");
+                return;
+            }
+
             string message;
             if (days == 0)
             {
@@ -241,6 +265,12 @@ namespace TruckingGameMode.Commands.AdminCommands
         [Command("mute", Shortcut = "mute")]
         public static void OnMuteCommand(BasePlayer sender, Player playerId, string reason, int minutes = 10)
         {
+            if (playerId.PlayerData().AdminLevel > 0)
+            {
+                sender.SendClientMessage(Color.IndianRed, "You can't mute other admin.");
+                return;
+            }
+
             if (minutes < 0 || minutes > 60)
             {
                 sender.SendClientMessage(Color.IndianRed, "Minutes can't be less than 0 or more than 60.");
