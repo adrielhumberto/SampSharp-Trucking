@@ -16,6 +16,7 @@ using SampSharp.GameMode.World;
 using TruckingGameMode.Classes;
 using TruckingGameMode.Classes.Jobs.Trucker;
 using TruckingGameMode.Commands;
+using TruckingGameMode.Houses;
 
 namespace TruckingGameMode.World
 {
@@ -26,6 +27,7 @@ namespace TruckingGameMode.World
         public PlayerClasses PlayerClass { get; set; }
         private int LoginTries { get; set; }
         public TruckerJobDetails CurrentJob { get; set; }
+        public House CurrentHouse { get; set; }
 
         public override int Money
         {

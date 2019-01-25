@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data.Common;
 using GamemodeDatabase;
+using GamemodeDatabase.Data;
 using MySql.Data.MySqlClient;
 using SampSharp.GameMode;
 using SampSharp.GameMode.Controllers;
@@ -11,6 +12,7 @@ using SampSharp.GameMode.World;
 using SampSharp.Streamer.World;
 using TruckingGameMode.Classes.Jobs.Trucker;
 using TruckingGameMode.Controllers;
+using TruckingGameMode.Houses;
 using TruckingGameMode.World;
 
 namespace TruckingGameMode
@@ -105,6 +107,33 @@ namespace TruckingGameMode
 
             #endregion
 
+            #region Houses
+
+            foreach (var house in HouseModel.GetAllHouses())
+                if (house.Owned == 0)
+                    House.Houses.Add(new House(house.Id)
+                    {
+                        MapIcon =
+                            new DynamicMapIcon(new Vector3(house.PositionX, house.PositionY, house.PositionZ), 31),
+                        TextLabel = new DynamicTextLabel(
+                            $"ID: {house.Id}\nHouse Price: ${house.Price:##,###}\nHouse Level: {house.Level}\nType /buyhouse to buy it.",
+                            Color.Teal, new Vector3(house.PositionX, house.PositionY, house.PositionZ + 1.0), 5.0f),
+                        HousePickup = new DynamicPickup(1273, 1,
+                            new Vector3(house.PositionX, house.PositionY, house.PositionZ), 10.0f)
+                    });
+                else
+                    House.Houses.Add(new House(house.Id)
+                    {
+                        MapIcon =
+                            new DynamicMapIcon(new Vector3(house.PositionX, house.PositionY, house.PositionZ), 32),
+                        TextLabel = new DynamicTextLabel(
+                            $"ID: {house.Id}\nHouse Owner: {house.Owner}\nHouse Max Level: {house.MaxLevel}\nType /enter to enter the house.",
+                            Color.Teal, new Vector3(house.PositionX, house.PositionY, house.PositionZ + 1.0), 10.0f),
+                        HousePickup = new DynamicPickup(1272, 1,
+                            new Vector3(house.PositionX, house.PositionY, house.PositionZ), 10.0f)
+                    });
+
+            #endregion
 
             base.OnInitialized(e);
         }

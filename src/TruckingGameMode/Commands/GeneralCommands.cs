@@ -2,7 +2,7 @@
 using BCrypt;
 using Dapper;
 using GamemodeDatabase;
-using GamemodeDatabase.Models;
+using GamemodeDatabase.Data;
 using MySql.Data.MySqlClient;
 using SampSharp.GameMode;
 using SampSharp.GameMode.Definitions;

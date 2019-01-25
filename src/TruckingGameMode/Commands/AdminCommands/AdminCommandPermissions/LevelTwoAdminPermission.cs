@@ -4,13 +4,13 @@ using TruckingGameMode.World;
 
 namespace TruckingGameMode.Commands.AdminCommands.AdminCommandPermissions
 {
-    public class LevelOneAdminPermission : IPermissionChecker
+    public class LevelTwoAdminPermission : IPermissionChecker
     {
         public bool Check(BasePlayer player)
         {
-            return player is Player playerData && playerData.PlayerData().AdminLevel >= 1;
+            return player is Player playerData && playerData.PlayerData().AdminLevel >= 2;
         }
 
-        public string Message => "You need level 1 admin level to use this command";
+        public string Message => "You need level 2 admin level to use this command";
     }
 }

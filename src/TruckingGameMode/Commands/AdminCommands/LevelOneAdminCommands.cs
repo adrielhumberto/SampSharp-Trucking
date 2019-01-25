@@ -114,7 +114,7 @@ namespace TruckingGameMode.Commands.AdminCommands
         public static async void OnPortLocCommand(BasePlayer sender, float x, float y, float z)
         {
             sender.Position = new Vector3(x, y, z);
-            await Task.Delay(100);
+            await Task.Delay(Config.KickDelay);
 
             sender.SendClientMessage(Color.GreenYellow, $"You teleported to {sender.Position.ToString()}");
         }
@@ -258,7 +258,7 @@ namespace TruckingGameMode.Commands.AdminCommands
             BasePlayer.SendClientMessageToAll(Color.Blue, $"{playerId.Name} has been banned from the server.");
             sender.SendClientMessage(Color.GreenYellow, $"You successfully banned {playerId.Name} from this server.");
 
-            await Task.Delay(100);
+            await Task.Delay(Config.KickDelay);
             playerId.Kick();
         }
 
