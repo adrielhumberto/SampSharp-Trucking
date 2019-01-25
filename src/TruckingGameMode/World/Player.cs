@@ -259,6 +259,7 @@ namespace TruckingGameMode.World
             dialogList.AddItem("Random spawn");
             dialogList.AddItem("Select Spawn");
             dialogList.AddItem("Last location");
+            dialogList.AddItem("Your house");
             dialogList.Show(this);
 
             if (PlayerClass == PlayerClasses.TruckDriver)
@@ -317,6 +318,21 @@ namespace TruckingGameMode.World
                             {
                                 SetSpawnInfo(0, Skin, GetPlayerPositionVector3FromDatabase(), PlayerData().FacingAngle);
                                 Spawn();
+                            }
+                                break;
+                            case 3:
+                            {
+                                var ownedHouse = House.Houses.Find(x => x.HouseData().Owner == Name);
+                                if (ownedHouse is null)
+                                {
+                                    SendClientMessage(Color.IndianRed, "You are not owning any house.");
+                                    dialogList.Show(this);
+                                }
+                                else
+                                {
+                                    SetSpawnInfo(0, Skin, ownedHouse.Position, PlayerData().FacingAngle);
+                                    Spawn();
+                                }
                             }
                                 break;
                         }
