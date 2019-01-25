@@ -3,7 +3,7 @@ using System.Linq;
 using Dapper;
 using MySql.Data.MySqlClient;
 
-namespace GamemodeDatabase.Models
+namespace GamemodeDatabase.Data
 {
     public class TruckerSpawnModel
     {

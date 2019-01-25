@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace GamemodeDatabase.Models
+namespace GamemodeDatabase.Data
 {
     public class PlayerModel
     {
