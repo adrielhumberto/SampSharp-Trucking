@@ -229,6 +229,21 @@ namespace TruckingGameMode.Houses
                 $"ID: {house.DbId}\nHouse Price: ${house.HouseData().Price:##,###}\nHouse Max Level: {house.HouseData().MaxLevel}\nType /buyhouse to buy it.";
         }
 
+        [Command("gotohouse", PermissionChecker = typeof(LevelTwoAdminPermission))]
+        public static void OnGoToHouseCommand(BasePlayer sender, int houseId)
+        {
+            var house = House.Houses.Find(x => x.DbId == houseId);
+
+            if (house is null)
+            {
+                sender.SendClientMessage(Color.IndianRed, "The house doesn't exist.");
+                return;
+            }
+
+            sender.Position = house.Position;
+            sender.SendClientMessage(Color.GreenYellow, $"You have been teleported to house id {houseId}.");
+        }
+
         #endregion
     }
 }
