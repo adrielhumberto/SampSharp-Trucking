@@ -148,22 +148,42 @@ namespace TruckingGameMode.Commands
                 switch (eve.ListItem)
                 {
                     default:
-                    {
-                        sender.Position = new Vector3(spawnsList[eve.ListItem].X,
-                            spawnsList[eve.ListItem].Y,
-                            spawnsList[eve.ListItem].Z);
-                        sender.Angle = spawnsList[eve.ListItem].Angle;
-                    }
+                        {
+                            sender.Position = new Vector3(spawnsList[eve.ListItem].X,
+                                spawnsList[eve.ListItem].Y,
+                                spawnsList[eve.ListItem].Z);
+                            sender.Angle = spawnsList[eve.ListItem].Angle;
+                        }
                         break;
                 }
             };
         }
 
         [Command("assist")]
-        public static void OnAssistCommand(BasePlayer sender)
+        public static void OnAssistCommand(Player sender)
         {
             if (sender.Vehicle == null)
+            {
                 sender.SendClientMessage(Color.IndianRed, "You are not driving any vehicle!");
+                return;
+            }
+
+            if (sender.Vehicle.Health >= 999)
+            {
+                sender.SendClientMessage(Color.IndianRed, "Your vehicle is not damaged.");
+                return;
+            }
+
+            var repairPayment = (int) (1000.0f - sender.Vehicle.Health) * 5;
+
+            if (sender.Money <= repairPayment)
+            {
+                sender.SendClientMessage(Color.IndianRed, $"You don't have enough money to repair the car. You need ${repairPayment - sender.Money} more.");
+                return;
+            }
+
+            sender.Money -= repairPayment;
+            sender.SendClientMessage(Color.GreenYellow, $"You payed ${repairPayment} to repair your car.");
 
             sender.Vehicle?.Repair();
         }
@@ -265,5 +285,6 @@ namespace TruckingGameMode.Commands
                     adminData.SendClientMessage(Color.Red, $"New report from {sender.Name}. Type /reports to view it!");
             }
         }
+
     }
 }
