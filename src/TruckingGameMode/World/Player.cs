@@ -24,10 +24,12 @@ namespace TruckingGameMode.World
     public class Player : BasePlayer
     {
         public bool IsLogged;
+        private Timer updateMoneyTimer;
         public PlayerClasses PlayerClass { get; set; }
         private int LoginTries { get; set; }
         public TruckerJobDetails CurrentJob { get; set; }
         public House CurrentHouse { get; set; }
+
 
         public override int Money
         {
@@ -208,6 +210,8 @@ namespace TruckingGameMode.World
                 Kick();
             }
 
+            updateMoneyTimer = new Timer(500, true);
+            updateMoneyTimer.Tick += (sender, ev) => { base.Money = Money; };
 
             base.OnConnected(e);
         }
@@ -442,6 +446,12 @@ namespace TruckingGameMode.World
         {
             SavePlayerLastPosition();
             base.OnDeath(e);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            updateMoneyTimer.Dispose();
+            base.Dispose(disposing);
         }
 
         #endregion
