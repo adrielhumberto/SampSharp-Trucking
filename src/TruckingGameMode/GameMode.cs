@@ -116,7 +116,7 @@ namespace TruckingGameMode
                         MapIcon =
                             new DynamicMapIcon(new Vector3(house.PositionX, house.PositionY, house.PositionZ), 31),
                         TextLabel = new DynamicTextLabel(
-                            $"ID: {house.Id}\nHouse Price: ${house.Price:##,###}\nHouse Level: {house.Level}\nType /buyhouse to buy it.",
+                            string.Format(StaticTexts.TextHouseForSale, Color.LightGreen, Color.White, house.Id, house.Price, house.MaxLevel),
                             Color.Teal, new Vector3(house.PositionX, house.PositionY, house.PositionZ + 1.0), 5.0f),
                         HousePickup = new DynamicPickup(1273, 1,
                             new Vector3(house.PositionX, house.PositionY, house.PositionZ), 10.0f)
@@ -127,7 +127,8 @@ namespace TruckingGameMode
                         MapIcon =
                             new DynamicMapIcon(new Vector3(house.PositionX, house.PositionY, house.PositionZ), 32),
                         TextLabel = new DynamicTextLabel(
-                            $"ID: {house.Id}\nHouse Owner: {house.Owner}\nHouse Max Level: {house.MaxLevel}\nType /enter to enter the house.",
+                            string.Format(StaticTexts.TextHouseOwned,
+                                Color.LightGreen, Color.White, house.Id, house.Owner, house.Level),
                             Color.Teal, new Vector3(house.PositionX, house.PositionY, house.PositionZ + 1.0), 10.0f),
                         HousePickup = new DynamicPickup(1272, 1,
                             new Vector3(house.PositionX, house.PositionY, house.PositionZ), 10.0f)

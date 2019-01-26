@@ -63,8 +63,8 @@ namespace TruckingGameMode.Houses
 
             house.HousePickup.ModelId = 1272;
             house.MapIcon.Type = 32;
-            house.TextLabel.Text =
-                $"ID: {house.DbId}\nHouse Owner: {sender.Name}\nHouse Level: {house.HouseData().Level}\nType /enter to enter the house";
+            house.TextLabel.Text = string.Format(StaticTexts.TextHouseOwned,
+                Color.LightGreen, Color.White, house.DbId, sender.Name, house.HouseData().Level);
         }
 
         [Command("enter")]
@@ -157,7 +157,7 @@ namespace TruckingGameMode.Houses
                 MapIcon =
                     new DynamicMapIcon(new Vector3(sender.Position.X, sender.Position.Y, sender.Position.Z), 31),
                 TextLabel = new DynamicTextLabel(
-                    $"ID: {houseDbId}\nHouse Price: ${price:##,###}\nHouse Max Level: {maxLevel}\nType /buyhouse to buy it.",
+                    string.Format(StaticTexts.TextHouseForSale, Color.LightGreen, Color.White, houseDbId, price, maxLevel),
                     Color.Teal, new Vector3(sender.Position.X, sender.Position.Y, sender.Position.Z + 1.0), 5.0f),
                 HousePickup = new DynamicPickup(1273, 1,
                     new Vector3(sender.Position.X, sender.Position.Y, sender.Position.Z), 10.0f)
@@ -225,8 +225,8 @@ namespace TruckingGameMode.Houses
 
             house.HousePickup.ModelId = 1273;
             house.MapIcon.Type = 31;
-            house.TextLabel.Text =
-                $"ID: {house.DbId}\nHouse Price: ${house.HouseData().Price:##,###}\nHouse Max Level: {house.HouseData().MaxLevel}\nType /buyhouse to buy it.";
+            house.TextLabel.Text = string.Format(StaticTexts.TextHouseForSale,
+                Color.LightGreen, Color.White, house.DbId, house.HouseData().Price, house.HouseData().MaxLevel);
         }
 
         [Command("gotohouse", PermissionChecker = typeof(LevelTwoAdminPermission))]
