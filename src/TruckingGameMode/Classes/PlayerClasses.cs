@@ -2,6 +2,7 @@
 {
     public enum PlayerClasses
     {
-        TruckDriver
+        None = 0,
+        TruckDriver = 1
     }
 }
