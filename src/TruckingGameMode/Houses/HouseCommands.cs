@@ -27,50 +27,44 @@ namespace TruckingGameMode.Houses
                 return;
             }
 
-            var houseId = 0;
+            var house = House.Houses.Find(x => x.Position.DistanceTo(sender.Position) < 4.0f);
+            if (house is null)
+            {
+                sender.SendClientMessage(Color.IndianRed, "You are not close to any house.");
+                return;
+            }
 
-            foreach (var house in House.Houses)
-                if (sender.Position.DistanceTo(house.Position) < 4.0f)
-                {
-                    if (house.HouseData().Owned == 0)
-                    {
-                        if (sender.Money >= house.HouseData().Price)
-                        {
-                            houseId = house.DbId;
-                            sender.Money -= house.HouseData().Price;
-                            sender.SendClientMessage(Color.GreenYellow,
-                                $"You bought house id {house.DbId} for ${house.HouseData().Price}.");
-                            break;
-                        }
+            if (house.HouseData().Owned != 0)
+            {
+                sender.SendClientMessage(Color.IndianRed, "The house is already owned.");
+                return;
+            }
 
-                        sender.SendClientMessage(Color.IndianRed,
-                            "You don't have enough money to buy the house.");
-                        return;
-                    }
+            if (sender.Money <= house.HouseData().Price)
+            {
+                sender.SendClientMessage(Color.IndianRed,
+                    "You don't have enough money to buy the house.");
+                return;
+            }
 
-                    sender.SendClientMessage(Color.IndianRed, "The house is already owned.");
-                    return;
-                }
-                else
-                {
-                    sender.SendClientMessage(Color.IndianRed, "You are not close to any house.");
-                    return;
-                }
+
+            sender.Money -= house.HouseData().Price;
+            sender.SendClientMessage(Color.GreenYellow,
+                $"You bought house id {house.DbId} for ${house.HouseData().Price}.");
 
             using (var db = new MySqlConnection(DapperHelper.ConnectionString))
             {
                 db.Execute(@"UPDATE houses SET Owned = 1, Owner = @Owner WHERE Id = @Id", new
                 {
                     Owner = sender.Name,
-                    Id = houseId
+                    Id = house.DbId
                 });
             }
 
-            var houseToUpdate = House.Houses.Find(x => x.DbId == houseId);
-            houseToUpdate.HousePickup.ModelId = 1272;
-            houseToUpdate.MapIcon.Type = 32;
-            houseToUpdate.TextLabel.Text =
-                $"ID: {houseId}\nHouse Owner: {sender.Name}\nHouse Level: {houseToUpdate.HouseData().Level}\nType /enter to enter the house";
+            house.HousePickup.ModelId = 1272;
+            house.MapIcon.Type = 32;
+            house.TextLabel.Text =
+                $"ID: {house.DbId}\nHouse Owner: {sender.Name}\nHouse Level: {house.HouseData().Level}\nType /enter to enter the house";
         }
 
         [Command("enter")]
@@ -82,30 +76,28 @@ namespace TruckingGameMode.Houses
                 return;
             }
 
-            foreach (var house in House.Houses)
+            var house = House.Houses.Find(x => x.Position.DistanceTo(sender.Position) < 4.0f);
+            if (house is null)
             {
-                if (house.HouseData().Owned == 0)
-                {
-                    sender.SendClientMessage(Color.IndianRed, "The house is not owned.");
-                    return;
-                }
-
-                if (sender.Position.DistanceTo(house.Position) < 4.0f)
-                {
-                    var houseInterior = HouseInteriorModel.GetHouseInteriors()
-                        .Find(x => x.Level == house.HouseData().Level);
-                    sender.Interior = houseInterior.InteriorId;
-                    sender.Position = new Vector3(houseInterior.PositionX, houseInterior.PositionY,
-                        houseInterior.PositionZ);
-                    sender.Angle = houseInterior.Angle;
-                    sender.CurrentHouse = house;
-                }
-                else
-                {
-                    sender.SendClientMessage(Color.IndianRed, "You are not near any house.");
-                    return;
-                }
+                sender.SendClientMessage(Color.IndianRed, "You are not near a house.");
+                return;
             }
+
+
+            if (house.HouseData().Owned == 0)
+            {
+                sender.SendClientMessage(Color.IndianRed, "The house is not owned.");
+                return;
+            }
+
+
+            var houseInterior = HouseInteriorModel.GetHouseInteriors()
+                .Find(x => x.Level == house.HouseData().Level);
+            sender.Interior = houseInterior.InteriorId;
+            sender.Position = new Vector3(houseInterior.PositionX, houseInterior.PositionY,
+                houseInterior.PositionZ);
+            sender.Angle = houseInterior.Angle;
+            sender.CurrentHouse = house;
         }
 
         [Command("exit")]
@@ -157,7 +149,7 @@ namespace TruckingGameMode.Houses
                         MaxLevel = maxLevel,
                         Price = price
                     });
-                houseDbId = db.QuerySingle<int>(@"SELECT LAST_INSERT_ID()");
+                houseDbId = await db.QuerySingleAsync<int>(@"SELECT LAST_INSERT_ID()");
             }
 
             House.Houses.Add(new House(houseDbId)
@@ -175,66 +167,66 @@ namespace TruckingGameMode.Houses
         [Command("deletehouse", PermissionChecker = typeof(LevelTwoAdminPermission))]
         public static void OnDeleteHouseCommand(BasePlayer sender)
         {
-            foreach (var house in House.Houses)
+            var house = House.Houses.Find(x => x.Position.DistanceTo(sender.Position) < 4.0f);
+            if (house is null)
             {
-                if (!(sender.Position.DistanceTo(house.Position) < 4.0f)) continue;
-
-                if (house.HouseData().Owned == 1)
-                {
-                    var basePlayer = BasePlayer.All.First(x => x.Name == house.HouseData().Owner);
-                    basePlayer.SendClientMessage(Color.IndianRed,
-                        $"Your house with id {house.DbId} has been deleted by an admin.");
-                }
-
-                using (var db = new MySqlConnection(DapperHelper.ConnectionString))
-                {
-                    db.Execute(@"DELETE FROM houses WHERE Id = @id", new {id = house.DbId});
-                }
-
-                sender.SendClientMessage(Color.GreenYellow, $"You successfully deleted house id {house.DbId}.");
-
-                house.HousePickup.Dispose();
-                house.MapIcon.Dispose();
-                house.TextLabel.Dispose();
-                House.Houses.Remove(house);
-                House.Houses.TrimExcess();
-
-                break;
+                sender.SendClientMessage(Color.IndianRed, "You are not near any house.");
+                return;
             }
+
+            if (house.HouseData().Owned == 1)
+            {
+                var basePlayer = BasePlayer.All.First(x => x.Name == house.HouseData().Owner);
+                basePlayer.SendClientMessage(Color.IndianRed,
+                    $"Your house with id {house.DbId} has been deleted by an admin.");
+            }
+
+            using (var db = new MySqlConnection(DapperHelper.ConnectionString))
+            {
+                db.Execute(@"DELETE FROM houses WHERE Id = @id", new {id = house.DbId});
+            }
+
+            sender.SendClientMessage(Color.GreenYellow, $"You successfully deleted house id {house.DbId}.");
+
+            house.HousePickup.Dispose();
+            house.MapIcon.Dispose();
+            house.TextLabel.Dispose();
+            House.Houses.Remove(house);
+            House.Houses.TrimExcess();
         }
 
         [Command("evicthouse", PermissionChecker = typeof(LevelTwoAdminPermission))]
         public static void OnEvictHouseCommand(BasePlayer sender)
         {
-            foreach (var house in House.Houses)
+            var house = House.Houses.Find(x => x.Position.DistanceTo(sender.Position) < 4.0f);
+            if (house is null)
             {
-                if (!(sender.Position.DistanceTo(house.Position) < 4.0f)) continue;
-
-                if (house.HouseData().Owned == 1)
-                {
-                    var basePlayer = BasePlayer.All.First(x => x.Name == house.HouseData().Owner);
-                    basePlayer.SendClientMessage(Color.IndianRed,
-                        $"You have been evicted from your house id {house.DbId} by an admin.");
-
-                    using (var db = new MySqlConnection(DapperHelper.ConnectionString))
-                    {
-                        db.Execute(@"UPDATE houses SET Owned = 0, Owner = ' ' WHERE Id = @id",
-                            new {id = house.DbId});
-                    }
-
-                    sender.SendClientMessage(Color.GreenYellow, $"You evicted the owner of house id {house.DbId}.");
-
-                    house.HousePickup.ModelId = 1273;
-                    house.MapIcon.Type = 31;
-                    house.TextLabel.Text =
-                        $"ID: {house.DbId}\nHouse Price: ${house.HouseData().Price:##,###}\nHouse Max Level: {house.HouseData().MaxLevel}\nType /buyhouse to buy it.";
-                }
-                else
-                {
-                    sender.SendClientMessage(Color.IndianRed, "This house its not owned by anyone.");
-                    return;
-                }
+                sender.SendClientMessage(Color.IndianRed, "You a re not near any house.");
+                return;
             }
+
+            if (house.HouseData().Owned == 0)
+            {
+                sender.SendClientMessage(Color.IndianRed, "This house its not owned by anyone.");
+                return;
+            }
+
+            var basePlayer = BasePlayer.All.First(x => x.Name == house.HouseData().Owner);
+            basePlayer.SendClientMessage(Color.IndianRed,
+                $"You have been evicted from your house id {house.DbId} by an admin.");
+
+            using (var db = new MySqlConnection(DapperHelper.ConnectionString))
+            {
+                db.Execute(@"UPDATE houses SET Owned = 0, Owner = ' ' WHERE Id = @id",
+                    new {id = house.DbId});
+            }
+
+            sender.SendClientMessage(Color.GreenYellow, $"You evicted the owner of house id {house.DbId}.");
+
+            house.HousePickup.ModelId = 1273;
+            house.MapIcon.Type = 31;
+            house.TextLabel.Text =
+                $"ID: {house.DbId}\nHouse Price: ${house.HouseData().Price:##,###}\nHouse Max Level: {house.HouseData().MaxLevel}\nType /buyhouse to buy it.";
         }
 
         #endregion
