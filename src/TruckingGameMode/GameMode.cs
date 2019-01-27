@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Data.Common;
+using System.Linq;
+using System.Threading.Tasks;
 using GamemodeDatabase;
 using GamemodeDatabase.Data;
 using MySql.Data.MySqlClient;
@@ -148,6 +150,16 @@ namespace TruckingGameMode
         protected override void OnPlayerCommandText(BasePlayer player, CommandTextEventArgs e)
         {
             if (player is Player playerData && playerData.IsLogged) base.OnPlayerCommandText(player, e);
+        }
+
+        protected override void OnRconLoginAttempt(RconLoginAttemptEventArgs e)
+        {
+            foreach (var player in BasePlayer.All)
+            {
+                if(player.IP.Equals(e.IP))
+                    player.Kick();
+            }
+            base.OnRconLoginAttempt(e);
         }
     }
 }
