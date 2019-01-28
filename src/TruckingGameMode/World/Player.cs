@@ -23,8 +23,8 @@ namespace TruckingGameMode.World
     [PooledType]
     public class Player : BasePlayer
     {
+        private Timer _updateMoneyTimer;
         public bool IsLogged;
-        private Timer updateMoneyTimer;
         public PlayerClasses PlayerClass { get; set; }
         private int LoginTries { get; set; }
         public TruckerJobDetails CurrentJob { get; set; }
@@ -124,6 +124,11 @@ namespace TruckingGameMode.World
                     {
                         ToggleSpectating(false);
                         IsLogged = true;
+                        SendClientMessageToAll(Color.DarkGray, $"* Player {Name} connected to server.");
+
+                        _updateMoneyTimer = new Timer(500, true);
+                        _updateMoneyTimer.Tick += (obj, evv) => { base.Money = Money; };
+
                         base.Money = Money;
                     }
                     else
@@ -188,7 +193,6 @@ namespace TruckingGameMode.World
                         });
                     }
 
-
             if (PlayerBan() is null)
             {
                 if (PlayerData() is null)
@@ -209,9 +213,6 @@ namespace TruckingGameMode.World
                 await Task.Delay(Config.KickDelay);
                 Kick();
             }
-
-            updateMoneyTimer = new Timer(500, true);
-            updateMoneyTimer.Tick += (sender, ev) => { base.Money = Money; };
 
             base.OnConnected(e);
         }
@@ -431,6 +432,8 @@ namespace TruckingGameMode.World
                 CurrentJob.Trailer.Dispose();
             }
 
+            SendClientMessageToAll(Color.DarkGray, $"* Player {Name} left the server({e.Reason.ToString()}).");
+
             base.OnDisconnected(e);
         }
 
@@ -450,7 +453,7 @@ namespace TruckingGameMode.World
 
         protected override void Dispose(bool disposing)
         {
-            updateMoneyTimer.Dispose();
+            _updateMoneyTimer.Dispose();
             base.Dispose(disposing);
         }
 

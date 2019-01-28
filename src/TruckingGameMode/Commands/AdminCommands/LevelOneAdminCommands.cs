@@ -33,8 +33,6 @@ namespace TruckingGameMode.Commands.AdminCommands
 
             await Task.Delay(Config.KickDelay);
             playerId.Kick();
-
-            BasePlayer.SendClientMessageToAll(Color.IndianRed, $"{playerId.Name} has been kicked from the server.");
         }
 
         [Command("repair", Shortcut = "repair")]
@@ -255,7 +253,6 @@ namespace TruckingGameMode.Commands.AdminCommands
 
             playerId.SendClientMessage(Color.IndianRed, message);
 
-            BasePlayer.SendClientMessageToAll(Color.Blue, $"{playerId.Name} has been banned from the server.");
             sender.SendClientMessage(Color.GreenYellow, $"You successfully banned {playerId.Name} from this server.");
 
             await Task.Delay(Config.KickDelay);
