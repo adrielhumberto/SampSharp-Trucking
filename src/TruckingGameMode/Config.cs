@@ -2,7 +2,7 @@
 {
     public static class Config
     {
-        public static int MaximumLoginTries { get; } = 3;
-        public static int KickDelay { get; } = 100;
+        public const int MaximumLoginTries = 3;
+        public const int KickDelay = 3;
     }
 }
