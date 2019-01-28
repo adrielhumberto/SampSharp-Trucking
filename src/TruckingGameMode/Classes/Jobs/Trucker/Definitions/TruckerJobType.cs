@@ -2,8 +2,8 @@
 {
     public enum TruckerJobType
     {
-        QuickJob,
-        FreightMarket,
-        CargoMarket
+        QuickJob = 0,
+        FreightMarket = 1,
+        CargoMarket = 2
     }
 }

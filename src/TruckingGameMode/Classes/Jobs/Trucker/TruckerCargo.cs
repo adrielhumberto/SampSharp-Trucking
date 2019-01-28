@@ -4,7 +4,7 @@ namespace TruckingGameMode.Classes.Jobs.Trucker
 {
     public class TruckerCargo
     {
-        public static List<TruckerCargo> Cargoes = new List<TruckerCargo>
+        public static readonly List<TruckerCargo> Cargoes = new List<TruckerCargo>
         {
             new TruckerCargo("Food"),
             new TruckerCargo("Canned Food"),
@@ -12,11 +12,11 @@ namespace TruckingGameMode.Classes.Jobs.Trucker
             new TruckerCargo("Mouse pads")
         };
 
-        public TruckerCargo(string name)
+        private TruckerCargo(string name)
         {
             Name = name;
         }
 
-        public string Name { get; set; }
+        public string Name { get; }
     }
 }

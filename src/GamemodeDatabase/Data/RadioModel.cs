@@ -11,11 +11,14 @@ namespace GamemodeDatabase.Data
         public string Name { get; set; }
         public string Url { get; set; }
 
-        public static List<RadioModel> GetRadioStations()
+        public static List<RadioModel> GetRadioStations
         {
-            using (var db = new MySqlConnection(DapperHelper.ConnectionString))
+            get
             {
-                return db.Query<RadioModel>("SELECT * FROM radio").ToList();
+                using (var db = new MySqlConnection(DapperHelper.ConnectionString))
+                {
+                    return db.Query<RadioModel>("SELECT * FROM radio").ToList();
+                }
             }
         }
     }

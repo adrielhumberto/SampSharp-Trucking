@@ -21,11 +21,14 @@ namespace GamemodeDatabase.Data
 
         public string Owner { get; set; }
 
-        public static List<HouseModel> GetAllHouses()
+        public static List<HouseModel> GetAllHouses
         {
-            using (var db = new MySqlConnection(DapperHelper.ConnectionString))
+            get
             {
-                return db.Query<HouseModel>("SELECT * FROM houses").ToList();
+                using (var db = new MySqlConnection(DapperHelper.ConnectionString))
+                {
+                    return db.Query<HouseModel>("SELECT * FROM houses").ToList();
+                }
             }
         }
     }

@@ -122,7 +122,7 @@ namespace TruckingGameMode
 
             #region Houses
 
-            foreach (var house in HouseModel.GetAllHouses())
+            foreach (var house in HouseModel.GetAllHouses)
                 if (house.Owned == 0)
                     House.Houses.Add(new House(house.Id)
                     {
@@ -153,9 +153,7 @@ namespace TruckingGameMode
             base.OnInitialized(e);
         }
 
-        
-
-        private void _jobListRefresh_Tick(object sender, EventArgs e)
+        private static void _jobListRefresh_Tick(object sender, EventArgs e)
         {
             foreach (var jobLocation in TruckerJobLocation.JobLocations)
                 jobLocation.JobList = TruckerJobDetails.GenerateJobList(jobLocation);

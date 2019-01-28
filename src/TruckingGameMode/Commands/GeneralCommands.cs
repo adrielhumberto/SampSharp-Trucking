@@ -94,7 +94,7 @@ namespace TruckingGameMode.Commands
 
             radioDialog.Add("#", "Name");
 
-            foreach (var radio in RadioModel.GetRadioStations()) radioDialog.Add($"{radio.Id}", $"{radio.Name}");
+            foreach (var radio in RadioModel.GetRadioStations) radioDialog.Add($"{radio.Id}", $"{radio.Name}");
             radioDialog.Show(sender);
 
             radioDialog.Response += (obj, e) =>
@@ -105,7 +105,7 @@ namespace TruckingGameMode.Commands
                 switch (e.ListItem)
                 {
                     default:
-                        sender.PlayAudioStream(RadioModel.GetRadioStations()[e.ListItem].Url);
+                        sender.PlayAudioStream(RadioModel.GetRadioStations[e.ListItem].Url);
                         break;
                 }
             };
