@@ -148,12 +148,12 @@ namespace TruckingGameMode.Commands
                 switch (eve.ListItem)
                 {
                     default:
-                        {
-                            sender.Position = new Vector3(spawnsList[eve.ListItem].X,
-                                spawnsList[eve.ListItem].Y,
-                                spawnsList[eve.ListItem].Z);
-                            sender.Angle = spawnsList[eve.ListItem].Angle;
-                        }
+                    {
+                        sender.Position = new Vector3(spawnsList[eve.ListItem].X,
+                            spawnsList[eve.ListItem].Y,
+                            spawnsList[eve.ListItem].Z);
+                        sender.Angle = spawnsList[eve.ListItem].Angle;
+                    }
                         break;
                 }
             };
@@ -178,7 +178,8 @@ namespace TruckingGameMode.Commands
 
             if (sender.Money <= repairPayment)
             {
-                sender.SendClientMessage(Color.IndianRed, $"You don't have enough money to repair the car. You need ${repairPayment - sender.Money} more.");
+                sender.SendClientMessage(Color.IndianRed,
+                    $"You don't have enough money to repair the car. You need ${repairPayment - sender.Money} more.");
                 return;
             }
 
@@ -285,6 +286,5 @@ namespace TruckingGameMode.Commands
                     adminData.SendClientMessage(Color.Red, $"New report from {sender.Name}. Type /reports to view it!");
             }
         }
-
     }
 }

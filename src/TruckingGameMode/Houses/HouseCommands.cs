@@ -157,7 +157,8 @@ namespace TruckingGameMode.Houses
                 MapIcon =
                     new DynamicMapIcon(new Vector3(sender.Position.X, sender.Position.Y, sender.Position.Z), 31),
                 TextLabel = new DynamicTextLabel(
-                    string.Format(StaticTexts.TextHouseForSale, Color.LightGreen, Color.White, houseDbId, price, maxLevel),
+                    string.Format(StaticTexts.TextHouseForSale, Color.LightGreen, Color.White, houseDbId, price,
+                        maxLevel),
                     Color.Teal, new Vector3(sender.Position.X, sender.Position.Y, sender.Position.Z + 1.0), 5.0f),
                 HousePickup = new DynamicPickup(1273, 1,
                     new Vector3(sender.Position.X, sender.Position.Y, sender.Position.Z), 10.0f)

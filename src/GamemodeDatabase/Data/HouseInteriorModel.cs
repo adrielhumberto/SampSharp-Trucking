@@ -10,7 +10,7 @@ namespace GamemodeDatabase.Data
         public int Id { get; set; }
         public string Name { get; set; }
         public int Level { get; set; }
-        
+
         public float PositionX { get; set; }
         public float PositionY { get; set; }
         public float PositionZ { get; set; }

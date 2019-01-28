@@ -4,6 +4,6 @@ namespace TruckingGameMode.Classes
 {
     public static class PlayerClassesColors
     {
-        public static Color TruckerColor { get;  } = Color.Orange;
+        public static Color TruckerColor { get; } = Color.Orange;
     }
 }

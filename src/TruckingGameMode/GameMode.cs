@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Data.Common;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using GamemodeDatabase;
 using GamemodeDatabase.Data;
 using MySql.Data.MySqlClient;
@@ -140,7 +138,8 @@ namespace TruckingGameMode
                         MapIcon =
                             new DynamicMapIcon(new Vector3(house.PositionX, house.PositionY, house.PositionZ), 31),
                         TextLabel = new DynamicTextLabel(
-                            string.Format(StaticTexts.TextHouseForSale, Color.LightGreen, Color.White, house.Id, house.Price, house.MaxLevel),
+                            string.Format(StaticTexts.TextHouseForSale, Color.LightGreen, Color.White, house.Id,
+                                house.Price, house.MaxLevel),
                             Color.Teal, new Vector3(house.PositionX, house.PositionY, house.PositionZ + 1.0), 5.0f),
                         HousePickup = new DynamicPickup(1273, 1,
                             new Vector3(house.PositionX, house.PositionY, house.PositionZ), 10.0f)
@@ -177,10 +176,8 @@ namespace TruckingGameMode
         protected override void OnRconLoginAttempt(RconLoginAttemptEventArgs e)
         {
             foreach (var player in BasePlayer.All)
-            {
-                if(player.IP.Equals(e.IP))
+                if (player.IP.Equals(e.IP))
                     player.Kick();
-            }
             base.OnRconLoginAttempt(e);
         }
     }
