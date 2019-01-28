@@ -401,5 +401,17 @@ namespace TruckingGameMode.Commands.AdminCommands
             carId.Dispose();
             sender.SendClientMessage(Color.GreenYellow, "Car have been disposed successfully.");
         }
+
+        [Command("disposeallcars", Shortcut = "disposeallcars")]
+        public static void OnDisposeAllCarsCommand(BasePlayer sender)
+        {
+            foreach (var car in BaseVehicle.All)
+            {
+                if (car is Vehicle customCar && customCar.AdminSpawned)
+                    customCar.Dispose();
+
+                sender.SendClientMessage(Color.GreenYellow, "All admin spawned cars have been disposed.");
+            }
+        }
     }
 }
