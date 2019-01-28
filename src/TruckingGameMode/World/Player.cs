@@ -271,13 +271,14 @@ namespace TruckingGameMode.World
                 dialogList.Response += (sender, ev) =>
                 {
                     var spawnsList = TruckerSpawnModel.GetTruckerSpawnListNoTracking;
+                    var randomIndex = new Random().Next(spawnsList.Count);
                     if (ev.DialogButton != DialogButton.Right)
                     {
                         switch (ev.ListItem)
                         {
                             case 0:
                             {
-                                var randomIndex = new Random().Next(spawnsList.Count);
+                                
 
                                 SetSpawnInfo(0, Skin,
                                     new Vector3(spawnsList[randomIndex].X,
@@ -321,8 +322,14 @@ namespace TruckingGameMode.World
                                 break;
                             case 2:
                             {
-                                SetSpawnInfo(0, Skin, GetPlayerPositionVector3FromDatabase(), PlayerData().FacingAngle);
-                                Spawn();
+                                SetSpawnInfo(0, Skin,
+                                    new Vector3(spawnsList[randomIndex].X,
+                                        spawnsList[randomIndex].Y,
+                                        spawnsList[randomIndex].Z),
+                                    spawnsList[randomIndex].Angle);
+                                    Spawn();
+                                    Position = GetPlayerPositionVector3FromDatabase();
+                                    Angle = PlayerData().FacingAngle;
                             }
                                 break;
                             case 3:
@@ -344,8 +351,6 @@ namespace TruckingGameMode.World
                     }
                     else
                     {
-                        var randomIndex = new Random().Next(spawnsList.Count);
-
                         SetSpawnInfo(0, Skin,
                             new Vector3(spawnsList[randomIndex].X,
                                 spawnsList[randomIndex].Y,
@@ -367,15 +372,10 @@ namespace TruckingGameMode.World
             ToggleClock(false);
             ResetWeapons();
 
-            var message = string.Empty;
-
             if (PlayerClass == PlayerClasses.TruckDriver)
             {
                 Color = PlayerClassesColors.TruckerColor;
-                message = $"{Name} joined truck driver class.";
             }
-
-            SendClientMessageToAll(Color, message);
 
             base.OnSpawned(e);
         }
@@ -443,12 +443,6 @@ namespace TruckingGameMode.World
                 SendClientMessage(Color.CadetBlue, "Press key 2 to start your vehicle engine.");
 
             base.OnEnterVehicle(e);
-        }
-
-        public override void OnDeath(DeathEventArgs e)
-        {
-            SavePlayerLastPosition();
-            base.OnDeath(e);
         }
 
         protected override void Dispose(bool disposing)
