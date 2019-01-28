@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Data.Common;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using GamemodeDatabase;
 using GamemodeDatabase.Data;
 using MySql.Data.MySqlClient;
+using Newtonsoft.Json;
 using SampSharp.GameMode;
 using SampSharp.GameMode.Controllers;
 using SampSharp.GameMode.Definitions;
@@ -34,6 +36,26 @@ namespace TruckingGameMode
 
         protected override void OnInitialized(EventArgs e)
         {
+            #region Loading connection string
+
+            try
+            {
+                var path = $@"{Client.ServerPath}/scriptfiles/Settings.json";
+                using (var r = new StreamReader(path))
+                {
+                    var json = r.ReadToEnd();
+                    dynamic items = JsonConvert.DeserializeObject(json);
+                    DapperHelper.ConnectionString = items["connectionString"];
+                }
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Settings.json can't be find under scriptfiles folder.");
+                throw;
+            }
+
+            #endregion
+
             #region Database checking
 
             try
