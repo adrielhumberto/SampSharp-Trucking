@@ -382,5 +382,24 @@ namespace TruckingGameMode.Commands.AdminCommands
             car.AdminSpawned = true;
             sender.PutInVehicle(car, 0);
         }
+
+        [Command("disposecar", Shortcut = "disposecar")]
+        public static void OnDisposeCarCommand(BasePlayer sender, Vehicle carId)
+        {
+            if (carId is null)
+            {
+                sender.SendClientMessage(Color.IndianRed, "The car doesn't exist.");
+                return;
+            }
+
+            if (!carId.AdminSpawned)
+            {
+                sender.SendClientMessage(Color.IndianRed, "This car is not spawned by an admin.");
+                return;
+            }
+
+            carId.Dispose();
+            sender.SendClientMessage(Color.GreenYellow, "Car have been disposed successfully.");
+        }
     }
 }
