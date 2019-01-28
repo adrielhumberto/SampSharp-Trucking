@@ -27,7 +27,7 @@ namespace TruckingGameMode
 
         public static void TimedMessagesTimer_Tick(object sender, EventArgs e)
         {
-            BasePlayer.SendClientMessageToAll(Color.Blue, TimedMessages[_lastTimedMessage].Message);
+            BasePlayer.SendClientMessageToAll(Color.LightGray, TimedMessages[_lastTimedMessage].Message);
 
             _lastTimedMessage++;
 
