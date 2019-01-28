@@ -378,7 +378,14 @@ namespace TruckingGameMode.Commands.AdminCommands
                 return;
             }
 
+            if(model < 400 || model > 611)
+            {
+                sender.SendClientMessage(Color.IndianRed, "Invalid vehicle model.");
+                return;
+            }
+
             var car = Vehicle.Create((VehicleModelType) model, sender.Position, 90.0f, 2, 2);
+            car.Engine = true;
             car.AdminSpawned = true;
             sender.PutInVehicle(car, 0);
         }
@@ -410,8 +417,8 @@ namespace TruckingGameMode.Commands.AdminCommands
                 if (car is Vehicle customCar && customCar.AdminSpawned)
                     customCar.Dispose();
 
-                sender.SendClientMessage(Color.GreenYellow, "All admin spawned cars have been disposed.");
             }
+            sender.SendClientMessage(Color.GreenYellow, "All admin spawned cars have been disposed.");
         }
     }
 }
