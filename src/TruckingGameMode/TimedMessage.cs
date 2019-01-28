@@ -1,21 +1,38 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using SampSharp.GameMode.SAMP;
+using SampSharp.GameMode.World;
 
 namespace TruckingGameMode
 {
     public class TimedMessage
     {
-        public static List<TimedMessage> TimedMessages = new List<TimedMessage>
+        private static int _lastTimedMessage;
+
+        private static readonly List<TimedMessage> TimedMessages = new List<TimedMessage>
         {
-            new TimedMessage("Beware of speed traps (60kph in the city, 90kph on roads, 120kph on highways)"),
-            new TimedMessage("You want to refuel your vehicle? Park on a refuel-pickup and honk the horn")
+            new TimedMessage("Always drive on the right side of the road and follow the speed limit."),
+            new TimedMessage("Don't give your account password to anyone. Admins will never ask you for your account details."),
+            new TimedMessage("Remember: Using mods/scripts that will give you advantages is illegal."),
+            new TimedMessage("Add our server to favorites for faster reconnect.")
         };
 
 
-        public TimedMessage(string message)
+        private TimedMessage(string message)
         {
             Message = message;
         }
 
-        public string Message { get; set; }
+        private string Message { get; }
+
+        public static void TimedMessagesTimer_Tick(object sender, EventArgs e)
+        {
+            BasePlayer.SendClientMessageToAll(Color.Blue, TimedMessages[_lastTimedMessage].Message);
+
+            _lastTimedMessage++;
+
+            if (_lastTimedMessage == TimedMessages.Count)
+                _lastTimedMessage = 0;
+        }
     }
 }

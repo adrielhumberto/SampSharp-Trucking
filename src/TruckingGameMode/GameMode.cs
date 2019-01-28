@@ -22,7 +22,6 @@ namespace TruckingGameMode
     public class GameMode : BaseMode
     {
         private Timer _jobListRefresh;
-        private int _lastTimedMessage;
 
         protected override void LoadControllers(ControllerCollection controllers)
         {
@@ -99,15 +98,7 @@ namespace TruckingGameMode
             #region Timed info messages
 
             var timedMessagesTimer = new Timer(1000 * 60 * 2, true);
-            timedMessagesTimer.Tick += (sender, ev) =>
-            {
-                BasePlayer.SendClientMessageToAll(Color.Wheat, TimedMessage.TimedMessages[_lastTimedMessage].Message);
-
-                _lastTimedMessage++;
-
-                if (_lastTimedMessage == TimedMessage.TimedMessages.Count)
-                    _lastTimedMessage = 0;
-            };
+            timedMessagesTimer.Tick += TimedMessage.TimedMessagesTimer_Tick;
 
             #endregion
 
@@ -161,6 +152,8 @@ namespace TruckingGameMode
 
             base.OnInitialized(e);
         }
+
+        
 
         private void _jobListRefresh_Tick(object sender, EventArgs e)
         {
