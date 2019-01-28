@@ -87,39 +87,25 @@ namespace TruckingGameMode.Commands
         [Command("radio")]
         public static void OnListenRadioCommand(BasePlayer sender)
         {
-            var dialog = new ListDialog("Chose a radio station", "Chose", "Close");
-            dialog.AddItem("Pro FM");
-            dialog.AddItem("Radio Bandit");
-            dialog.AddItem("TruckersFM");
-            dialog.AddItem("SimulatorRadio");
-            dialog.AddItem("TruckSim FM");
-            dialog.AddItem("Stop radio");
-            dialog.Show(sender);
+            var radioDialog = new TablistDialog("Chose a radio station", 2, "Listen", "Cancel")
+            {
+                Style = DialogStyle.TablistHeaders
+            };
 
-            dialog.Response += (obj, e) =>
+            radioDialog.Add("#", "Name");
+
+            foreach (var radio in RadioModel.GetRadioStations()) radioDialog.Add($"{radio.Id}", $"{radio.Name}");
+            radioDialog.Show(sender);
+
+            radioDialog.Response += (obj, e) =>
             {
                 if (e.DialogButton == DialogButton.Right)
                     return;
 
                 switch (e.ListItem)
                 {
-                    case 0:
-                        sender.PlayAudioStream("http://edge126.rdsnet.ro:84/profm/profm.mp3");
-                        break;
-                    case 1:
-                        sender.PlayAudioStream("http://live.radiobandit.ro:8000/bandit.mp3");
-                        break;
-                    case 2:
-                        sender.PlayAudioStream("https://radio.truckers.fm");
-                        break;
-                    case 3:
-                        sender.PlayAudioStream("https://simulatorradio.stream/stream?1547465711053");
-                        break;
-                    case 4:
-                        sender.PlayAudioStream("https://trucksim.fm/stream/audio.mp3");
-                        break;
                     default:
-                        sender.StopAudioStream();
+                        sender.PlayAudioStream(RadioModel.GetRadioStations()[e.ListItem].Url);
                         break;
                 }
             };
@@ -280,11 +266,8 @@ namespace TruckingGameMode.Commands
             sender.SendClientMessage(Color.GreenYellow, "You report has been submitted to our admins!");
 
             foreach (var admin in BasePlayer.All)
-            {
-                var adminData = admin as Player;
-                if (adminData.PlayerData().AdminLevel > 0)
+                if (admin is Player adminData && adminData.PlayerData().AdminLevel > 0)
                     adminData.SendClientMessage(Color.Red, $"New report from {sender.Name}. Type /reports to view it!");
-            }
         }
     }
 }
