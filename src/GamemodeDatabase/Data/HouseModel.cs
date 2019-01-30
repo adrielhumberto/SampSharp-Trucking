@@ -15,7 +15,7 @@ namespace GamemodeDatabase.Data
 
         public byte Level { get; set; }
         public byte MaxLevel { get; set; }
-        public byte Owned { get; set; }
+        public bool Owned { get; set; }
 
         public int Price { get; set; }
 

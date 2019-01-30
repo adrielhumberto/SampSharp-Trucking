@@ -103,7 +103,7 @@ namespace TruckingGameMode
             #region Houses
 
             foreach (var house in HouseModel.GetAllHouses)
-                if (house.Owned == 0)
+                if (house.Owned == false)
                     House.Houses.Add(new House(house.Id)
                     {
                         MapIcon =
