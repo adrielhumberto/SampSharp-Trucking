@@ -33,6 +33,8 @@ namespace TruckingGameMode
 
         protected override void OnInitialized(EventArgs e)
         {
+            DapperHelper.LoadConnectionString();
+
             #region Database checking
 
             try
