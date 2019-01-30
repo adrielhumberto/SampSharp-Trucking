@@ -178,15 +178,14 @@ namespace TruckingGameMode.Commands
         [Command("admins")]
         public static void OnAdminsCommand(BasePlayer sender)
         {
-            var listDialog = new ListDialog("Admin List", "Ok");
-            foreach (var admin in BasePlayer.All)
+            var adminListDialog = new TablistDialog("Online admins", 3, "Close") {Style = DialogStyle.TablistHeaders};
+            adminListDialog.Add("ID", "Name", "Level");
+            foreach (var player in BasePlayer.All)
             {
-                var adminData = admin as Player;
-                if (adminData?.PlayerData().AdminLevel > 0)
-                    listDialog.AddItem(adminData.Name);
+                if (player is Player adminData && adminData.PlayerData().AdminLevel > 0)
+                    adminListDialog.Add(adminData.Id.ToString(), adminData.Name, adminData.PlayerData().AdminLevel.ToString());
             }
-
-            listDialog.Show(sender);
+            adminListDialog.Show(sender);
         }
 
         [Command("eject")]
