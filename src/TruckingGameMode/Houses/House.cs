@@ -70,7 +70,7 @@ namespace TruckingGameMode.Houses
             var upgradePrice = ((HouseData().Price / 100) * Config.HouseUpgradePercent) * numUpgrades;
 
             // Add 50% of the upgrade-price to the sell-price
-            sellPrice += upgradePrice;
+            sellPrice = sellPrice + upgradePrice;
 
             return sellPrice;
         }
