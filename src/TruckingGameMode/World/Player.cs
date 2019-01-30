@@ -30,7 +30,6 @@ namespace TruckingGameMode.World
         public TruckerJobDetails CurrentJob { get; set; }
         public House CurrentHouse { get; set; }
 
-
         public override int Money
         {
             get => PlayerData().Money;
@@ -46,6 +45,60 @@ namespace TruckingGameMode.World
                 }
 
                 base.Money = PlayerData().Money;
+            }
+        }
+
+        public override int Score
+        {
+            get => PlayerData().Score;
+            set
+            {
+                using (var db = new MySqlConnection(DapperHelper.ConnectionString))
+                {
+                    db.Execute(@"UPDATE players SET Score = @Score WHERE Name = @PName", new
+                    {
+                        Score = value,
+                        PNAme = Name
+                    });
+                }
+
+                base.Score = PlayerData().Score;
+            }
+        }
+
+        public override float Health
+        {
+            get => PlayerData().Health;
+            set
+            {
+                using (var db = new MySqlConnection(DapperHelper.ConnectionString))
+                {
+                    db.Execute(@"UPDATE players SET Health = @Health WHERE Name = @PName", new
+                    {
+                        Health = value,
+                        PNAme = Name
+                    });
+                }
+
+                base.Health = PlayerData().Health;
+            }
+        }
+
+        public override float Armour
+        {
+            get => PlayerData().Armour;
+            set
+            {
+                using (var db = new MySqlConnection(DapperHelper.ConnectionString))
+                {
+                    db.Execute(@"UPDATE players SET Armour = @Armour WHERE Name = @PName", new
+                    {
+                        Armour = value,
+                        PNAme = Name
+                    });
+                }
+
+                base.Armour = PlayerData().Armour;
             }
         }
 
@@ -426,12 +479,6 @@ namespace TruckingGameMode.World
         {
             SavePlayerLastPosition();
 
-            if (CurrentJob != null)
-            {
-                CurrentJob.Truck.Dispose();
-                CurrentJob.Trailer.Dispose();
-            }
-
             SendClientMessageToAll(Color.DarkGray, $"* Player {Name} left the server({e.Reason.ToString()}).");
 
             base.OnDisconnected(e);
@@ -448,6 +495,16 @@ namespace TruckingGameMode.World
         protected override void Dispose(bool disposing)
         {
             _updateMoneyTimer.Dispose();
+
+            if (CurrentJob != null)
+            {
+                CurrentJob.Truck.Dispose();
+                CurrentJob.Trailer.Dispose();
+            }
+
+            CurrentJob = null;
+            CurrentHouse = null;
+
             base.Dispose(disposing);
         }
 
