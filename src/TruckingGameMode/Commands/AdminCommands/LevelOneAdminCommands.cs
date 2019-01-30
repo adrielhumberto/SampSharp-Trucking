@@ -421,5 +421,14 @@ namespace TruckingGameMode.Commands.AdminCommands
             }
             sender.SendClientMessage(Color.GreenYellow, "All admin spawned cars have been disposed.");
         }
+
+        [Command("repairallcars", Shortcut = "repairallcars")]
+        public static void OnRepairAllCommand(BasePlayer sender)
+        {
+            foreach(var car in BaseVehicle.All)
+                car.Repair();
+
+            BasePlayer.SendClientMessageToAll(Color.GreenYellow, $"Admin {sender.Name} repaired all cars.");
+        }
     }
 }
