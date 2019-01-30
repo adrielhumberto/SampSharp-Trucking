@@ -17,10 +17,6 @@
 
   <ItemGroup>
     <PackageReference Include="BCrypt-Core" Version="2.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.2.1">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="SampSharp.Core" Version="0.8.0" />
     <PackageReference Include="SampSharp.GameMode" Version="0.8.0" />
     <PackageReference Include="SampSharp.Streamer" Version="0.8.0-alpha1" />
