@@ -109,9 +109,10 @@ namespace TruckingGameMode.Commands.AdminCommands
         }
 
         [Command("portloc", Shortcut = "portloc")]
-        public static async void OnPortLocCommand(BasePlayer sender, float x, float y, float z)
+        public static async void OnPortLocCommand(BasePlayer sender, float x, float y, float z, int interior = 0)
         {
             sender.Position = new Vector3(x, y, z);
+            sender.Interior = interior;
             await Task.Delay(Config.KickDelay);
 
             sender.SendClientMessage(Color.GreenYellow, $"You teleported to {sender.Position.ToString()}");
