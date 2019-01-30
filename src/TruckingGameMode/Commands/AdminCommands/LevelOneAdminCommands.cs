@@ -441,5 +441,12 @@ namespace TruckingGameMode.Commands.AdminCommands
 
             BasePlayer.SendClientMessageToAll(Color.GreenYellow, $"Admin {sender.Name} healed all players.");
         }
+
+        [Command("portvehicle", Shortcut = "portvehicle")]
+        public static void OnPortVehicleCommand(BasePlayer sender, BaseVehicle vehicleId)
+        {
+            sender.Position = vehicleId.Position + new Vector3(0, 0, 3);
+            sender.SendClientMessage(Color.GreenYellow, $"You got teleported to vehicle {vehicleId.Id}.");
+        }
     }
 }
