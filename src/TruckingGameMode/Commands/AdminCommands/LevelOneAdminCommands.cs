@@ -430,5 +430,16 @@ namespace TruckingGameMode.Commands.AdminCommands
 
             BasePlayer.SendClientMessageToAll(Color.GreenYellow, $"Admin {sender.Name} repaired all cars.");
         }
+
+        [Command("healall", Shortcut = "healall")]
+        public static void OnHealAllCommand(BasePlayer sender)
+        {
+            foreach (var player in BasePlayer.All)
+            {
+                player.Health = 100.0f;
+            }
+
+            BasePlayer.SendClientMessageToAll(Color.GreenYellow, $"Admin {sender.Name} healed all players.");
+        }
     }
 }
