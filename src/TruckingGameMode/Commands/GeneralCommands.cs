@@ -10,6 +10,7 @@ using SampSharp.GameMode.Display;
 using SampSharp.GameMode.SAMP;
 using SampSharp.GameMode.SAMP.Commands;
 using SampSharp.GameMode.World;
+using TruckingGameMode.Classes.Jobs.Trucker.Definitions;
 using TruckingGameMode.World;
 
 namespace TruckingGameMode.Commands
@@ -266,6 +267,32 @@ namespace TruckingGameMode.Commands
             foreach (var admin in BasePlayer.All)
                 if (admin is Player adminData && adminData.GetPlayerDataById().AdminLevel > 0)
                     adminData.SendClientMessage(Color.Red, $"New report from {sender.Name}. Type /reports to view it!");
+        }
+
+        [Command("cancelcargo")]
+        public static void OnCancelCargoCommand(Player sender)
+        {
+            if (sender.CurrentJob is null)
+            {
+                sender.SendClientMessage(Color.IndianRed, "You don't have a job.");
+                return;
+            }
+
+            sender.Money -= Config.CargoCancelPrice;
+            sender.SendClientMessage(Color.GreenYellow, $"You payed ${Config.CargoCancelPrice} for canceling the cargo.");
+
+            if (sender.CurrentJob.JobType == TruckerJobType.QuickJob)
+            {
+                sender.CurrentJob.Trailer.Dispose();
+                sender.CurrentJob.Truck.Dispose();
+            }
+            else if (sender.CurrentJob.JobType == TruckerJobType.FreightMarket)
+            {
+                sender.CurrentJob.Trailer.Dispose();
+            }
+
+            sender.JobTextDraw.Hide();
+            sender.CurrentJob = null;
         }
     }
 }

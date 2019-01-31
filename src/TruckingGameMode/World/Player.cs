@@ -16,6 +16,7 @@ using SampSharp.GameMode.World;
 using TruckingGameMode.Classes;
 using TruckingGameMode.Classes.Jobs.Trucker;
 using TruckingGameMode.Commands;
+using TruckingGameMode.Display.TextDraws;
 using TruckingGameMode.Houses;
 
 namespace TruckingGameMode.World
@@ -30,6 +31,7 @@ namespace TruckingGameMode.World
         private int LoginTries { get; set; }
         public TruckerJobDetails CurrentJob { get; set; }
         public House CurrentHouse { get; set; }
+        public TruckerJobTextDraw JobTextDraw { get; set; }
 
         public override int Money
         {
@@ -320,6 +322,15 @@ namespace TruckingGameMode.World
                 await Task.Delay(Config.KickDelay);
                 Kick();
             }
+
+            JobTextDraw = new TruckerJobTextDraw(this, new Vector2(281.618865, 430.0), " ")
+            {
+                Alignment = TextDrawAlignment.Center,
+                UseBox = true,
+                BoxColor = new Color(00, 00, 00, 99),
+                LetterSize = new Vector2(0.400000, 1.600000),
+                AutoDestroy = true
+            };
 
             base.OnConnected(e);
         }

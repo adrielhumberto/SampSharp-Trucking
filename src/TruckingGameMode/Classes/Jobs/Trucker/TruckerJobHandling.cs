@@ -50,6 +50,7 @@ namespace TruckingGameMode.Classes.Jobs.Trucker
                               player.CurrentJob.CargoWeight * 1.25;
 
             player.TruckerJobs += 1;
+            player.Score += 1;
 
             player.Money += (int) Math.Round(moneyEarned);
             player.SendClientMessage(Color.GreenYellow, $"You earned ${(int) Math.Round(moneyEarned)}");
@@ -63,7 +64,13 @@ namespace TruckingGameMode.Classes.Jobs.Trucker
                 case TruckerJobType.FreightMarket:
                     player.CurrentJob.Trailer.Dispose();
                     break;
+                case TruckerJobType.CargoMarket:
+                    break;
+                default:
+                    break;
             }
+
+            player.JobTextDraw.Hide();
 
             player.CurrentJob = null;
         }
@@ -118,6 +125,9 @@ namespace TruckingGameMode.Classes.Jobs.Trucker
                     player.CurrentJob.Truck.Trailer = player.CurrentJob.Trailer;
 
                     player.CurrentJob.Truck.Engine = true;
+
+                    player.JobTextDraw.Text = $"You delivering {player.CurrentJob.JobCargo.Name} from {player.CurrentJob.StartLocation.Name} to {player.CurrentJob.EndLocation.Name}";
+                    player.JobTextDraw.Show();
                     break;
                 }
                 case TruckerJobType.QuickJob:
@@ -152,7 +162,10 @@ namespace TruckingGameMode.Classes.Jobs.Trucker
                     player.CurrentJob.Truck.Trailer = player.CurrentJob.Trailer;
 
                     player.CurrentJob.Truck.Engine = true;
-                    break;
+
+                    player.JobTextDraw.Text = $"You delivering {player.CurrentJob.JobCargo.Name} from {player.CurrentJob.StartLocation.Name} to {player.CurrentJob.EndLocation.Name}";
+                    player.JobTextDraw.Show();
+                        break;
                 }
                 case TruckerJobType.FreightMarket:
                     player.SendClientMessage(Color.IndianRed, "You already have a job!");
@@ -193,7 +206,10 @@ namespace TruckingGameMode.Classes.Jobs.Trucker
                             player.CurrentJob.Trailer = (Vehicle) player.Vehicle.Trailer;
 
                             player.CurrentJob.Truck.Engine = true;
-                        }
+
+                            player.JobTextDraw.Text = $"You delivering {player.CurrentJob.JobCargo.Name} from {player.CurrentJob.StartLocation.Name} to {player.CurrentJob.EndLocation.Name}";
+                            player.JobTextDraw.Show();
+                            }
                         else
                         {
                             player.SendClientMessage(Color.IndianRed, "You already have a job!");
