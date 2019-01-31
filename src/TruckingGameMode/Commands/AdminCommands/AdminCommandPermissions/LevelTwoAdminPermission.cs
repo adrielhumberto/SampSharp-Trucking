@@ -8,7 +8,7 @@ namespace TruckingGameMode.Commands.AdminCommands.AdminCommandPermissions
     {
         public bool Check(BasePlayer player)
         {
-            return player is Player playerData && playerData.PlayerData().AdminLevel >= 2;
+            return player is Player playerData && playerData.GetPlayerDataById().AdminLevel >= 2;
         }
 
         public string Message => "You need level 2 admin level to use this command";

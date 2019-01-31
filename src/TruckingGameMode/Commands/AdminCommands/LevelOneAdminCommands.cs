@@ -21,7 +21,7 @@ namespace TruckingGameMode.Commands.AdminCommands
         [Command("kick", Shortcut = "kick")]
         public static async void OnKickCommand(BasePlayer sender, Player playerId, string reason)
         {
-            if (playerId.PlayerData().AdminLevel > 0)
+            if (playerId.GetPlayerDataById().AdminLevel > 0)
             {
                 sender.SendClientMessage(Color.IndianRed, "You can't kick other admin.");
                 return;
@@ -127,7 +127,7 @@ namespace TruckingGameMode.Commands.AdminCommands
         [Command("freeze", Shortcut = "freeze")]
         public static void OnFreezeCommand(BasePlayer sender, Player playerId)
         {
-            if (playerId.PlayerData().AdminLevel > 0)
+            if (playerId.GetPlayerDataById().AdminLevel > 0)
             {
                 sender.SendClientMessage(Color.IndianRed, "You can't freeze other admin.");
                 return;
@@ -165,7 +165,7 @@ namespace TruckingGameMode.Commands.AdminCommands
         [Command("warn", Shortcut = "warn")]
         public static void OnWarnCommand(BasePlayer sender, Player playerId, string reason)
         {
-            if (playerId.PlayerData().AdminLevel > 0)
+            if (playerId.GetPlayerDataById().AdminLevel > 0)
             {
                 sender.SendClientMessage(Color.IndianRed, "You can't warn other admin.");
                 return;
@@ -210,7 +210,7 @@ namespace TruckingGameMode.Commands.AdminCommands
         [Command("ban", Shortcut = "ban")]
         public static async void OnBanCommand(BasePlayer sender, Player playerId, string reason, int days = 0)
         {
-            if (playerId.PlayerData().AdminLevel > 0)
+            if (playerId.GetPlayerDataById().AdminLevel > 0)
             {
                 sender.SendClientMessage(Color.IndianRed, "You can't ban other admin.");
                 return;
@@ -263,7 +263,7 @@ namespace TruckingGameMode.Commands.AdminCommands
         [Command("mute", Shortcut = "mute")]
         public static void OnMuteCommand(BasePlayer sender, Player playerId, string reason, int minutes = 10)
         {
-            if (playerId.PlayerData().AdminLevel > 0)
+            if (playerId.GetPlayerDataById().AdminLevel > 0)
             {
                 sender.SendClientMessage(Color.IndianRed, "You can't mute other admin.");
                 return;
@@ -277,11 +277,10 @@ namespace TruckingGameMode.Commands.AdminCommands
 
             using (var db = new MySqlConnection(DapperHelper.ConnectionString))
             {
-                const string updateQuery = @"UPDATE players SET MuteTime = @MuteTime WHERE Name = @PName";
-                db.Execute(updateQuery, new
+                db.Execute(@"UPDATE players SET MuteTime = @MuteTime WHERE Id = @Id", new
                 {
                     MuteTime = DateTime.Now.AddMinutes(minutes),
-                    PName = playerId.Name
+                    Id = playerId.DbId
                 });
             }
 
@@ -294,7 +293,7 @@ namespace TruckingGameMode.Commands.AdminCommands
         [Command("unmute", Shortcut = "unmute")]
         public static void OnUnMuteCommand(BasePlayer sender, Player playerId)
         {
-            if (playerId.PlayerData().MuteTime < DateTime.Now)
+            if (playerId.GetPlayerDataById().MuteTime < DateTime.Now)
             {
                 sender.SendClientMessage(Color.IndianRed, $"{playerId.Name} is not currently muted.");
                 return;
@@ -302,11 +301,11 @@ namespace TruckingGameMode.Commands.AdminCommands
 
             using (var db = new MySqlConnection(DapperHelper.ConnectionString))
             {
-                const string updateQuery = @"UPDATE players SET MuteTime = @MuteTime WHERE Name = @PName";
+                const string updateQuery = @"UPDATE players SET MuteTime = @MuteTime WHERE Id = @Id";
                 db.Execute(updateQuery, new
                 {
                     MuteTime = DateTime.Now,
-                    PName = playerId.Name
+                    Id = playerId.DbId
                 });
             }
 

@@ -26,7 +26,7 @@ namespace TruckingGameMode.Commands.AdminCommands
                 return;
             }
 
-            if (playerId.PlayerData().AdminLevel == 3)
+            if (playerId.GetPlayerDataById().AdminLevel == 3)
             {
                 sender.SendClientMessage(Color.IndianRed, "You can't set admin level to highest admin.");
                 return;
@@ -34,11 +34,11 @@ namespace TruckingGameMode.Commands.AdminCommands
 
             using (var db = new MySqlConnection(DapperHelper.ConnectionString))
             {
-                db.Execute(@"UPDATE players SET AdminLevel = @Level WHERE Name = @PName", new{Level = level, PName = playerId.Name});
+                db.Execute(@"UPDATE players SET AdminLevel = @Level WHERE Id = @Id", new{Level = level, Id = playerId.DbId});
             }
 
             playerId.SendClientMessage(Color.GreenYellow,
-                level > playerId.PlayerData().AdminLevel
+                level > playerId.GetPlayerDataById().AdminLevel
                     ? $"You got promoted to admin level {level} by {sender.Name}."
                     : $"You got demoted to admin level {level} by {sender.Name}.");
 

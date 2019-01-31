@@ -24,6 +24,7 @@ namespace TruckingGameMode.World
     public class Player : BasePlayer
     {
         private Timer _updateMoneyTimer;
+        public int DbId { get; private set; }
         public bool IsLogged;
         public PlayerClasses PlayerClass { get; set; }
         private int LoginTries { get; set; }
@@ -32,107 +33,145 @@ namespace TruckingGameMode.World
 
         public override int Money
         {
-            get => PlayerData().Money;
+            get
+            {
+                using (var db = new MySqlConnection(DapperHelper.ConnectionString))
+                {
+                    return db.QueryFirst<int>("SELECT Money FROM players WHERE Id = @Id", new {Id = DbId});
+                }
+            }
             set
             {
                 using (var db = new MySqlConnection(DapperHelper.ConnectionString))
                 {
-                    db.Execute(@"UPDATE players SET Money = @Money WHERE Name = @PName", new
+                    db.Execute(@"UPDATE players SET Money = @Money WHERE Id = @Id", new
                     {
                         Money = value,
-                        PNAme = Name
+                        Id = DbId
                     });
                 }
 
-                base.Money = PlayerData().Money;
+                base.Money = Money;
             }
         }
 
         public override int Score
         {
-            get => PlayerData().Score;
+            get
+            {
+                using (var db = new MySqlConnection(DapperHelper.ConnectionString))
+                {
+                    return db.QueryFirst<int>("SELECT Score FROM players WHERE Id = @Id", new { Id = DbId });
+                }
+            }
             set
             {
                 using (var db = new MySqlConnection(DapperHelper.ConnectionString))
                 {
-                    db.Execute(@"UPDATE players SET Score = @Score WHERE Name = @PName", new
+                    db.Execute(@"UPDATE players SET Score = @Score WHERE Id = @Id", new
                     {
                         Score = value,
-                        PNAme = Name
+                        Id = DbId
                     });
                 }
 
-                base.Score = PlayerData().Score;
+                base.Score = Score;
             }
         }
 
         public override float Health
         {
-            get => PlayerData().Health;
+            get
+            {
+                using (var db = new MySqlConnection(DapperHelper.ConnectionString))
+                {
+                    return db.QueryFirst<float>("SELECT Health FROM players WHERE Id = @Id", new { Id = DbId });
+                }
+            }
             set
             {
                 using (var db = new MySqlConnection(DapperHelper.ConnectionString))
                 {
-                    db.Execute(@"UPDATE players SET Health = @Health WHERE Name = @PName", new
+                    db.Execute(@"UPDATE players SET Health = @Health WHERE Id = @Id", new
                     {
                         Health = value,
-                        PNAme = Name
+                        Id = DbId
                     });
                 }
 
-                base.Health = PlayerData().Health;
+                base.Health = Health;
             }
         }
 
         public override float Armour
         {
-            get => PlayerData().Armour;
+            get
+            {
+                using (var db = new MySqlConnection(DapperHelper.ConnectionString))
+                {
+                    return db.QueryFirst<float>("SELECT Armour FROM players WHERE Id = @Id", new { Id = DbId });
+                }
+            }
             set
             {
                 using (var db = new MySqlConnection(DapperHelper.ConnectionString))
                 {
-                    db.Execute(@"UPDATE players SET Armour = @Armour WHERE Name = @PName", new
+                    db.Execute(@"UPDATE players SET Armour = @Armour WHERE Id = @Id", new
                     {
                         Armour = value,
-                        PNAme = Name
+                        Id = DbId
                     });
                 }
 
-                base.Armour = PlayerData().Armour;
+                base.Armour = Armour;
             }
         }
 
         public int TruckerJobs
         {
-            get => PlayerData().TruckerJobs;
+            get
+            {
+                using (var db = new MySqlConnection(DapperHelper.ConnectionString))
+                {
+                    return db.QueryFirst<int>("SELECT TruckerJobs FROM players WHERE Id = @Id", new { Id = DbId });
+                }
+            }
             set
             {
                 using (var db = new MySqlConnection(DapperHelper.ConnectionString))
                 {
-                    const string updateQuery =
-                        @"UPDATE players SET TruckerJobs = TruckerJobs + @Value WHERE Name = @PName";
-                    db.Execute(updateQuery, new
+                    db.Execute(@"UPDATE players SET TruckerJobs = @Value WHERE Id = @Id", new
                     {
                         Value = value,
-                        PName = Name
+                        Id = DbId
                     });
                 }
             }
         }
 
-        public PlayerModel PlayerData()
+        private PlayerModel GetPlayerDataByName()
         {
             using (var db = new MySqlConnection(DapperHelper.ConnectionString))
             {
-                const string selectQuery = @"SELECT * FROM players WHERE Name = @PName";
-                return db.QueryFirstOrDefault<PlayerModel>(selectQuery, new
+                return db.QueryFirstOrDefault<PlayerModel>(@"SELECT Id, Password FROM players WHERE Name = @PName", new
                 {
                     PName = Name
                 });
             }
         }
 
-        public PlayerBanModel PlayerBan()
+        public PlayerModel GetPlayerDataById()
+        {
+            using (var db = new MySqlConnection(DapperHelper.ConnectionString))
+            {
+                return db.QueryFirstOrDefault<PlayerModel>(@"SELECT * FROM players WHERE Id = @Id", new
+                {
+                    Id = DbId
+                });
+            }
+        }
+
+        private PlayerBanModel PlayerBan()
         {
             using (var db = new MySqlConnection(DapperHelper.ConnectionString))
             {
@@ -146,13 +185,13 @@ namespace TruckingGameMode.World
 
         private Vector3 GetPlayerPositionVector3FromDatabase()
         {
-            return new Vector3(PlayerData().PositionX, PlayerData().PositionY, PlayerData().PositionZ);
+            return new Vector3(GetPlayerDataById().PositionX, GetPlayerDataById().PositionY, GetPlayerDataById().PositionZ);
         }
 
         public static void SendMessageToAdmins(Color color, string message)
         {
             foreach (var admin in All)
-                if (admin is Player adminData && adminData.PlayerData().AdminLevel > 0)
+                if (admin is Player adminData && adminData.GetPlayerDataById().AdminLevel > 0)
                     admin.SendClientMessage(color, message);
         }
 
@@ -173,10 +212,11 @@ namespace TruckingGameMode.World
                         await Task.Delay(Config.KickDelay);
                         Kick();
                     }
-                    else if (BCryptHelper.CheckPassword(ev.InputText, PlayerData().Password))
+                    else if (BCryptHelper.CheckPassword(ev.InputText, GetPlayerDataByName().Password))
                     {
                         ToggleSpectating(false);
                         IsLogged = true;
+                        DbId = GetPlayerDataByName().Id;
                         SendClientMessageToAll(Color.DarkGray, $"* Player {Name} connected to server.");
 
                         _updateMoneyTimer = new Timer(500, true);
@@ -225,6 +265,20 @@ namespace TruckingGameMode.World
             };
         }
 
+        private void SavePlayerLastPosition()
+        {
+            using (var db = new MySqlConnection(DapperHelper.ConnectionString))
+            {
+                db.Execute(@"UPDATE players SET PositionX = @PositionX, PositionY = @PositionY, PositionZ = @PositionZ WHERE Id = @Id", new
+                {
+                    PositionX = Position.X,
+                    PositionY = Position.Y,
+                    PositionZ = Position.Z,
+                    Id = DbId
+                });
+            }
+        }
+
         #endregion
 
         #region Oveerrides of BasePlayer
@@ -248,7 +302,7 @@ namespace TruckingGameMode.World
 
             if (PlayerBan() is null)
             {
-                if (PlayerData() is null)
+                if (GetPlayerDataByName() is null)
                     RegisterPlayer();
                 else
                     LoginPlayer();
@@ -382,7 +436,7 @@ namespace TruckingGameMode.World
                                     spawnsList[randomIndex].Angle);
                                     Spawn();
                                     Position = GetPlayerPositionVector3FromDatabase();
-                                    Angle = PlayerData().FacingAngle;
+                                    Angle = GetPlayerDataById().FacingAngle;
                             }
                                 break;
                             case 3:
@@ -395,7 +449,7 @@ namespace TruckingGameMode.World
                                 }
                                 else
                                 {
-                                    SetSpawnInfo(0, Skin, ownedHouse.Position, PlayerData().FacingAngle);
+                                    SetSpawnInfo(0, Skin, ownedHouse.Position, GetPlayerDataById().FacingAngle);
                                     Spawn();
                                 }
                             }
@@ -437,16 +491,16 @@ namespace TruckingGameMode.World
         {
             e.SendToPlayers = false;
 
-            if (PlayerData().MuteTime > DateTime.Now)
+            if (GetPlayerDataById().MuteTime > DateTime.Now)
             {
                 SendClientMessage(Color.IndianRed,
-                    DateTime.Now.Subtract(PlayerData().MuteTime).Minutes != 0
-                        ? $"You are currently muted for {PlayerData().MuteTime.Subtract(DateTime.Now).Minutes} more minutes."
-                        : $"You are currently muted for {PlayerData().MuteTime.Subtract(DateTime.Now).Seconds} more seconds.");
+                    DateTime.Now.Subtract(GetPlayerDataById().MuteTime).Minutes != 0
+                        ? $"You are currently muted for {GetPlayerDataById().MuteTime.Subtract(DateTime.Now).Minutes} more minutes."
+                        : $"You are currently muted for {GetPlayerDataById().MuteTime.Subtract(DateTime.Now).Seconds} more seconds.");
                 return;
             }
 
-            if (PlayerData().AdminLevel > 0)
+            if (GetPlayerDataById().AdminLevel > 0)
                 if (e.Text.StartsWith('@'))
                 {
                     SendMessageToAdmins(Color.Gold, $"[AC] {Name}: {e.Text.Remove(0, 1)}");
@@ -457,22 +511,6 @@ namespace TruckingGameMode.World
             SendClientMessageToAll(Color.White, $"{Color}{Name}[ID:{Id}]: {Color.White}{e.Text}");
 
             base.OnText(e);
-        }
-
-        private void SavePlayerLastPosition()
-        {
-            using (var db = new MySqlConnection(DapperHelper.ConnectionString))
-            {
-                const string updateQuery =
-                    @"UPDATE players SET PositionX = @PositionX, PositionY = @PositionY, PositionZ = @PositionZ WHERE Name = @PName";
-                db.Execute(updateQuery, new
-                {
-                    PositionX = Position.X,
-                    PositionY = Position.Y,
-                    PositionZ = Position.Z,
-                    PName = Name
-                });
-            }
         }
 
         public override void OnDisconnected(DisconnectEventArgs e)

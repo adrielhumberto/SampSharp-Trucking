@@ -33,11 +33,10 @@ namespace TruckingGameMode.Commands
 
                 using (var db = new MySqlConnection(DapperHelper.ConnectionString))
                 {
-                    const string updatequery = @"UPDATE players SET Password = @Password WHERE Name = @PName";
-                    await db.ExecuteAsync(updatequery, new
+                    await db.ExecuteAsync(@"UPDATE players SET Password = @Password WHERE Id = @Id", new
                     {
                         Password = hash,
-                        PName = sender.Name
+                        Id = sender.DbId
                     });
                 }
             };
@@ -182,8 +181,8 @@ namespace TruckingGameMode.Commands
             adminListDialog.Add("ID", "Name", "Level");
             foreach (var player in BasePlayer.All)
             {
-                if (player is Player adminData && adminData.PlayerData().AdminLevel > 0)
-                    adminListDialog.Add(adminData.Id.ToString(), adminData.Name, adminData.PlayerData().AdminLevel.ToString());
+                if (player is Player adminData && adminData.GetPlayerDataById().AdminLevel > 0)
+                    adminListDialog.Add(adminData.Id.ToString(), adminData.Name, adminData.GetPlayerDataById().AdminLevel.ToString());
             }
             adminListDialog.Show(sender);
         }
@@ -265,7 +264,7 @@ namespace TruckingGameMode.Commands
             sender.SendClientMessage(Color.GreenYellow, "You report has been submitted to our admins!");
 
             foreach (var admin in BasePlayer.All)
-                if (admin is Player adminData && adminData.PlayerData().AdminLevel > 0)
+                if (admin is Player adminData && adminData.GetPlayerDataById().AdminLevel > 0)
                     adminData.SendClientMessage(Color.Red, $"New report from {sender.Name}. Type /reports to view it!");
         }
     }
