@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using GamemodeDatabase.Data;
 using TruckingGameMode.Classes.Jobs.Trucker.Definitions;
 using TruckingGameMode.World;
 
@@ -7,8 +8,8 @@ namespace TruckingGameMode.Classes.Jobs.Trucker
 {
     public class TruckerJobDetails
     {
-        public TruckerJobDetails(TruckerJobLocation startLocation, TruckerJobLocation endLocation,
-            TruckerCargo jobCargo, int moneyAwarded, int cargoWeight)
+        private TruckerJobDetails(TruckerJobLocation startLocation, TruckerJobLocation endLocation,
+            TruckerCargoModel jobCargo, int moneyAwarded, int cargoWeight)
         {
             StartLocation = startLocation;
             EndLocation = endLocation;
@@ -17,13 +18,13 @@ namespace TruckingGameMode.Classes.Jobs.Trucker
             CargoWeight = cargoWeight;
         }
 
-        public TruckerJobLocation StartLocation { get; set; }
-        public TruckerJobLocation EndLocation { get; set; }
+        public TruckerJobLocation StartLocation { get; }
+        public TruckerJobLocation EndLocation { get;  }
 
-        public TruckerCargo JobCargo { get; set; }
+        public TruckerCargoModel JobCargo { get;}
 
-        public int MoneyAwarded { get; set; }
-        public int CargoWeight { get; set; }
+        public int MoneyAwarded { get; }
+        public int CargoWeight { get;  }
 
         public Vehicle Truck { get; set; }
         public Vehicle Trailer { get; set; }
@@ -43,7 +44,7 @@ namespace TruckingGameMode.Classes.Jobs.Trucker
 
                 list.Add(new TruckerJobDetails(startPoint,
                     destination,
-                    TruckerCargo.Cargoes[random.Next(TruckerCargo.Cargoes.Count)],
+                    TruckerCargoModel.GetCargoList[random.Next(TruckerCargoModel.GetCargoList.Count)],
                     random.Next(30, 140),
                     random.Next(1, 22)));
             }
