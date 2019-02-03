@@ -34,7 +34,8 @@ namespace TruckingGameMode.Commands.AdminCommands
 
             using (var db = new MySqlConnection(DapperHelper.ConnectionString))
             {
-                db.Execute(@"UPDATE players SET AdminLevel = @Level WHERE Id = @Id", new{Level = level, Id = playerId.DbId});
+                db.Execute(@"UPDATE players SET AdminLevel = @Level WHERE Id = @Id",
+                    new {Level = level, Id = playerId.DbId});
             }
 
             playerId.SendClientMessage(Color.GreenYellow,

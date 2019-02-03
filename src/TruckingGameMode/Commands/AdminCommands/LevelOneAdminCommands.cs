@@ -378,7 +378,7 @@ namespace TruckingGameMode.Commands.AdminCommands
                 return;
             }
 
-            if(model < 400 || model > 611)
+            if (model < 400 || model > 611)
             {
                 sender.SendClientMessage(Color.IndianRed, "Invalid vehicle model.");
                 return;
@@ -413,18 +413,15 @@ namespace TruckingGameMode.Commands.AdminCommands
         public static void OnDisposeAllCarsCommand(BasePlayer sender)
         {
             foreach (var car in BaseVehicle.All)
-            {
                 if (car is Vehicle customCar && customCar.AdminSpawned)
                     customCar.Dispose();
-
-            }
             sender.SendClientMessage(Color.GreenYellow, "All admin spawned cars have been disposed.");
         }
 
         [Command("repairallcars", Shortcut = "repairallcars")]
         public static void OnRepairAllCommand(BasePlayer sender)
         {
-            foreach(var car in BaseVehicle.All)
+            foreach (var car in BaseVehicle.All)
                 car.Repair();
 
             BasePlayer.SendClientMessageToAll(Color.GreenYellow, $"Admin {sender.Name} repaired all cars.");
@@ -433,10 +430,7 @@ namespace TruckingGameMode.Commands.AdminCommands
         [Command("healall", Shortcut = "healall")]
         public static void OnHealAllCommand(BasePlayer sender)
         {
-            foreach (var player in BasePlayer.All)
-            {
-                player.Health = 100.0f;
-            }
+            foreach (var player in BasePlayer.All) player.Health = 100.0f;
 
             BasePlayer.SendClientMessageToAll(Color.GreenYellow, $"Admin {sender.Name} healed all players.");
         }

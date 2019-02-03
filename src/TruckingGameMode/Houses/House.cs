@@ -67,7 +67,7 @@ namespace TruckingGameMode.Houses
             // Calculate the number of upgrades applied to the house
             var numUpgrades = HouseData().Level - 1;
             // Also calculate 50% for each upgrade, based on the percentage for upgrading the house
-            var upgradePrice = ((HouseData().Price / 100) * Config.HouseUpgradePercent) * numUpgrades;
+            var upgradePrice = HouseData().Price / 100 * Config.HouseUpgradePercent * numUpgrades;
 
             // Add 50% of the upgrade-price to the sell-price
             sellPrice = sellPrice + upgradePrice;

@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Data.Common;
-using System.IO;
 using GamemodeDatabase;
 using GamemodeDatabase.Data;
 using MySql.Data.MySqlClient;
-using Newtonsoft.Json;
 using SampSharp.GameMode;
 using SampSharp.GameMode.Controllers;
 using SampSharp.GameMode.Definitions;

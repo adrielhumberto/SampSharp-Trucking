@@ -66,8 +66,6 @@ namespace TruckingGameMode.Classes.Jobs.Trucker
                     break;
                 case TruckerJobType.CargoMarket:
                     break;
-                default:
-                    break;
             }
 
             player.JobTextDraw.Hide();
@@ -126,7 +124,8 @@ namespace TruckingGameMode.Classes.Jobs.Trucker
 
                     player.CurrentJob.Truck.Engine = true;
 
-                    player.JobTextDraw.Text = $"You delivering {player.CurrentJob.JobCargo.Name} from {player.CurrentJob.StartLocation.Name} to {player.CurrentJob.EndLocation.Name}";
+                    player.JobTextDraw.Text =
+                        $"You delivering {player.CurrentJob.JobCargo.Name} from {player.CurrentJob.StartLocation.Name} to {player.CurrentJob.EndLocation.Name}";
                     player.JobTextDraw.Show();
                     break;
                 }
@@ -163,9 +162,10 @@ namespace TruckingGameMode.Classes.Jobs.Trucker
 
                     player.CurrentJob.Truck.Engine = true;
 
-                    player.JobTextDraw.Text = $"You delivering {player.CurrentJob.JobCargo.Name} from {player.CurrentJob.StartLocation.Name} to {player.CurrentJob.EndLocation.Name}";
+                    player.JobTextDraw.Text =
+                        $"You delivering {player.CurrentJob.JobCargo.Name} from {player.CurrentJob.StartLocation.Name} to {player.CurrentJob.EndLocation.Name}";
                     player.JobTextDraw.Show();
-                        break;
+                    break;
                 }
                 case TruckerJobType.FreightMarket:
                     player.SendClientMessage(Color.IndianRed, "You already have a job!");
@@ -207,9 +207,10 @@ namespace TruckingGameMode.Classes.Jobs.Trucker
 
                             player.CurrentJob.Truck.Engine = true;
 
-                            player.JobTextDraw.Text = $"You delivering {player.CurrentJob.JobCargo.Name} from {player.CurrentJob.StartLocation.Name} to {player.CurrentJob.EndLocation.Name}";
+                            player.JobTextDraw.Text =
+                                $"You delivering {player.CurrentJob.JobCargo.Name} from {player.CurrentJob.StartLocation.Name} to {player.CurrentJob.EndLocation.Name}";
                             player.JobTextDraw.Show();
-                            }
+                        }
                         else
                         {
                             player.SendClientMessage(Color.IndianRed, "You already have a job!");

@@ -16,11 +16,13 @@ namespace TruckingGameMode.Display.TextDraws
         {
         }
 
-        public TruckerJobTextDraw(BasePlayer owner, Vector2 position, string text, TextDrawFont font) : base(owner, position, text, font)
+        public TruckerJobTextDraw(BasePlayer owner, Vector2 position, string text, TextDrawFont font) : base(owner,
+            position, text, font)
         {
         }
 
-        public TruckerJobTextDraw(BasePlayer owner, Vector2 position, string text, TextDrawFont font, Color foreColor) : base(owner, position, text, font, foreColor)
+        public TruckerJobTextDraw(BasePlayer owner, Vector2 position, string text, TextDrawFont font, Color foreColor) :
+            base(owner, position, text, font, foreColor)
         {
         }
     }

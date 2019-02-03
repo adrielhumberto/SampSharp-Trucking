@@ -181,10 +181,10 @@ namespace TruckingGameMode.Commands
             var adminListDialog = new TablistDialog("Online admins", 3, "Close") {Style = DialogStyle.TablistHeaders};
             adminListDialog.Add("ID", "Name", "Level");
             foreach (var player in BasePlayer.All)
-            {
                 if (player is Player adminData && adminData.GetPlayerDataById().AdminLevel > 0)
-                    adminListDialog.Add(adminData.Id.ToString(), adminData.Name, adminData.GetPlayerDataById().AdminLevel.ToString());
-            }
+                    adminListDialog.Add(adminData.Id.ToString(), adminData.Name,
+                        adminData.GetPlayerDataById().AdminLevel.ToString());
+
             adminListDialog.Show(sender);
         }
 
@@ -279,7 +279,8 @@ namespace TruckingGameMode.Commands
             }
 
             sender.Money -= Config.CargoCancelPrice;
-            sender.SendClientMessage(Color.GreenYellow, $"You payed ${Config.CargoCancelPrice} for canceling the cargo.");
+            sender.SendClientMessage(Color.GreenYellow,
+                $"You payed ${Config.CargoCancelPrice} for canceling the cargo.");
 
             if (sender.CurrentJob.JobType == TruckerJobType.QuickJob)
             {
@@ -293,6 +294,22 @@ namespace TruckingGameMode.Commands
 
             sender.JobTextDraw.Hide();
             sender.CurrentJob = null;
+        }
+
+        [Command("stats")]
+        public static void OnStatsCommand(Player sender, int playerId = -1)
+        {
+            var player = BasePlayer.Find(playerId);
+            if (player is null)
+            {
+                var playerStatsDialog = new MessageDialog($"Stats of: {sender.Name}", sender.PlayerStats, "Close");
+                playerStatsDialog.Show(sender);
+                return;
+            }
+
+            var playerData = player as Player;
+            var statsDialog = new MessageDialog($"Stats of: {playerData?.Name}", playerData?.PlayerStats, "Close");
+            statsDialog.Show(sender);
         }
     }
 }

@@ -144,7 +144,7 @@ namespace TruckingGameMode.Houses
 
             menuDialog.Response += (obj, e) =>
             {
-                if(e.DialogButton == DialogButton.Right)
+                if (e.DialogButton == DialogButton.Right)
                     return;
 
                 if (e.ListItem == 0)
@@ -156,12 +156,14 @@ namespace TruckingGameMode.Houses
                     }
 
 
-                    var upgradePrice = ((sender.CurrentHouse.HouseData().Price * (sender.CurrentHouse.HouseData().Level + 1)) / 100) *
+                    var upgradePrice = sender.CurrentHouse.HouseData().Price *
+                                       (sender.CurrentHouse.HouseData().Level + 1) / 100 *
                                        Config.HouseUpgradePercent;
 
                     if (sender.Money < upgradePrice)
                     {
-                        sender.SendClientMessage(Color.IndianRed, $"You don't have enough money. You need ${upgradePrice}.");
+                        sender.SendClientMessage(Color.IndianRed,
+                            $"You don't have enough money. You need ${upgradePrice}.");
                         return;
                     }
 
@@ -170,7 +172,8 @@ namespace TruckingGameMode.Houses
 
                     using (var db = new MySqlConnection(DapperHelper.ConnectionString))
                     {
-                        db.Execute(@"UPDATE houses SET Level = Level + 1 WHERE Id = @Id", new {Id = sender.CurrentHouse.DbId});
+                        db.Execute(@"UPDATE houses SET Level = Level + 1 WHERE Id = @Id",
+                            new {Id = sender.CurrentHouse.DbId});
                     }
 
                     var houseInterior = HouseInteriorModel.GetHouseInteriors()
@@ -184,14 +187,14 @@ namespace TruckingGameMode.Houses
                 }
                 else
                 {
-
                     var sellPrice = sender.CurrentHouse.CalculateSellPrice();
                     sender.Money += sellPrice;
                     sender.SendClientMessage(Color.GreenYellow, $"You sold your house for ${sellPrice}.");
 
                     using (var db = new MySqlConnection(DapperHelper.ConnectionString))
                     {
-                        db.Execute(@"UPDATE houses SET Owned = false, Level = 1, Owner = '' WHERE Id = @Id", new {Id = sender.CurrentHouse.DbId});
+                        db.Execute(@"UPDATE houses SET Owned = false, Level = 1, Owner = '' WHERE Id = @Id",
+                            new {Id = sender.CurrentHouse.DbId});
                     }
 
                     sender.CurrentHouse.UpdateHouseVisuals();

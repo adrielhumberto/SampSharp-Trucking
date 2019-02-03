@@ -19,12 +19,12 @@ namespace TruckingGameMode.Classes.Jobs.Trucker
         }
 
         public TruckerJobLocation StartLocation { get; }
-        public TruckerJobLocation EndLocation { get;  }
+        public TruckerJobLocation EndLocation { get; }
 
-        public TruckerCargoModel JobCargo { get;}
+        public TruckerCargoModel JobCargo { get; }
 
         public int MoneyAwarded { get; }
-        public int CargoWeight { get;  }
+        public int CargoWeight { get; }
 
         public Vehicle Truck { get; set; }
         public Vehicle Trailer { get; set; }

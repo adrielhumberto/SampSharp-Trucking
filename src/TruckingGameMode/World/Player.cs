@@ -25,8 +25,8 @@ namespace TruckingGameMode.World
     public class Player : BasePlayer
     {
         private Timer _updateMoneyTimer;
-        public int DbId { get; private set; }
         public bool IsLogged;
+        public int DbId { get; private set; }
         public PlayerClasses PlayerClass { get; set; }
         private int LoginTries { get; set; }
         public TruckerJobDetails CurrentJob { get; set; }
@@ -63,7 +63,7 @@ namespace TruckingGameMode.World
             {
                 using (var db = new MySqlConnection(DapperHelper.ConnectionString))
                 {
-                    return db.QueryFirst<int>("SELECT Score FROM players WHERE Id = @Id", new { Id = DbId });
+                    return db.QueryFirst<int>("SELECT Score FROM players WHERE Id = @Id", new {Id = DbId});
                 }
             }
             set
@@ -87,7 +87,7 @@ namespace TruckingGameMode.World
             {
                 using (var db = new MySqlConnection(DapperHelper.ConnectionString))
                 {
-                    return db.QueryFirst<float>("SELECT Health FROM players WHERE Id = @Id", new { Id = DbId });
+                    return db.QueryFirst<float>("SELECT Health FROM players WHERE Id = @Id", new {Id = DbId});
                 }
             }
             set
@@ -111,7 +111,7 @@ namespace TruckingGameMode.World
             {
                 using (var db = new MySqlConnection(DapperHelper.ConnectionString))
                 {
-                    return db.QueryFirst<float>("SELECT Armour FROM players WHERE Id = @Id", new { Id = DbId });
+                    return db.QueryFirst<float>("SELECT Armour FROM players WHERE Id = @Id", new {Id = DbId});
                 }
             }
             set
@@ -135,7 +135,7 @@ namespace TruckingGameMode.World
             {
                 using (var db = new MySqlConnection(DapperHelper.ConnectionString))
                 {
-                    return db.QueryFirst<int>("SELECT TruckerJobs FROM players WHERE Id = @Id", new { Id = DbId });
+                    return db.QueryFirst<int>("SELECT TruckerJobs FROM players WHERE Id = @Id", new {Id = DbId});
                 }
             }
             set
@@ -148,6 +148,20 @@ namespace TruckingGameMode.World
                         Id = DbId
                     });
                 }
+            }
+        }
+
+        public string PlayerStats
+        {
+            get
+            {
+                var playerStatistics = "\tGeneral Statistics:\n" +
+                                       $"Account ID: {DbId}\n" +
+                                       $"Money: ${Money:##,###}\n" +
+                                       $"Register Date: {GetPlayerDataById().JoinedDate}\n" +
+                                       $"Days since account creations: {DateTime.Now.Subtract(GetPlayerDataById().JoinedDate).Days}\n";
+
+                return playerStatistics;
             }
         }
 
@@ -187,7 +201,8 @@ namespace TruckingGameMode.World
 
         private Vector3 GetPlayerPositionVector3FromDatabase()
         {
-            return new Vector3(GetPlayerDataById().PositionX, GetPlayerDataById().PositionY, GetPlayerDataById().PositionZ);
+            return new Vector3(GetPlayerDataById().PositionX, GetPlayerDataById().PositionY,
+                GetPlayerDataById().PositionZ);
         }
 
         public static void SendMessageToAdmins(Color color, string message)
@@ -220,6 +235,10 @@ namespace TruckingGameMode.World
                         IsLogged = true;
                         DbId = GetPlayerDataByName().Id;
                         SendClientMessageToAll(Color.DarkGray, $"* Player {Name} connected to server.");
+                        SendClientMessage(Color.Aqua,
+                            $"Time since last visit: {DateTime.Now.Subtract(GetPlayerDataById().LastActive).Days} days, " +
+                            $"{DateTime.Now.Subtract(GetPlayerDataById().LastActive).Hours} hours, " +
+                            $"{DateTime.Now.Subtract(GetPlayerDataById().LastActive).Minutes} minutes");
 
                         _updateMoneyTimer = new Timer(500, true);
                         _updateMoneyTimer.Tick += (obj, evv) => { base.Money = Money; };
@@ -271,13 +290,15 @@ namespace TruckingGameMode.World
         {
             using (var db = new MySqlConnection(DapperHelper.ConnectionString))
             {
-                db.Execute(@"UPDATE players SET PositionX = @PositionX, PositionY = @PositionY, PositionZ = @PositionZ WHERE Id = @Id", new
-                {
-                    PositionX = Position.X,
-                    PositionY = Position.Y,
-                    PositionZ = Position.Z,
-                    Id = DbId
-                });
+                db.Execute(
+                    @"UPDATE players SET PositionX = @PositionX, PositionY = @PositionY, PositionZ = @PositionZ WHERE Id = @Id",
+                    new
+                    {
+                        PositionX = Position.X,
+                        PositionY = Position.Y,
+                        PositionZ = Position.Z,
+                        Id = DbId
+                    });
             }
         }
 
@@ -287,6 +308,9 @@ namespace TruckingGameMode.World
 
         public override async void OnConnected(EventArgs e)
         {
+            for (var i = 0; i < 100; i++)
+                SendClientMessage(Color.White, " ");
+
             SetWorldBounds(2500.0f, 1850.0f, 631.2963f, -454.9898f);
 
             ToggleSpectating(true);
@@ -396,8 +420,6 @@ namespace TruckingGameMode.World
                         {
                             case 0:
                             {
-                                
-
                                 SetSpawnInfo(0, Skin,
                                     new Vector3(spawnsList[randomIndex].X,
                                         spawnsList[randomIndex].Y,
@@ -445,9 +467,9 @@ namespace TruckingGameMode.World
                                         spawnsList[randomIndex].Y,
                                         spawnsList[randomIndex].Z),
                                     spawnsList[randomIndex].Angle);
-                                    Spawn();
-                                    Position = GetPlayerPositionVector3FromDatabase();
-                                    Angle = GetPlayerDataById().FacingAngle;
+                                Spawn();
+                                Position = GetPlayerPositionVector3FromDatabase();
+                                Angle = GetPlayerDataById().FacingAngle;
                             }
                                 break;
                             case 3:
@@ -490,10 +512,7 @@ namespace TruckingGameMode.World
             ToggleClock(false);
             ResetWeapons();
 
-            if (PlayerClass == PlayerClasses.TruckDriver)
-            {
-                Color = PlayerClassesColors.TruckerColor;
-            }
+            if (PlayerClass == PlayerClasses.TruckDriver) Color = PlayerClassesColors.TruckerColor;
 
             base.OnSpawned(e);
         }

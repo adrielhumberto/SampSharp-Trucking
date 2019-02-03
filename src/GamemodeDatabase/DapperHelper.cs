@@ -1,12 +1,12 @@
-﻿using Newtonsoft.Json;
-using System.IO;
+﻿using System.IO;
+using Newtonsoft.Json;
 
 namespace GamemodeDatabase
 {
     public static class DapperHelper
     {
         public static string ConnectionString { get; set; }
-        
+
 
         public static void LoadConnectionString()
         {
